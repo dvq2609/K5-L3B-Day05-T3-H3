@@ -1,13 +1,21 @@
-# Bài nộp LAB5 — [Track] · Nhóm [tên]
+# Bài nộp LAB5 — T3-Travel· Nhóm H3
 
-[Danh sách thành viên và việc mỗi người làm — copy bảng từ README]
+**Lớp:** L3B  · **Track:** T3-Travel
+
+| Họ và Tên            | Mã Học Viên | Việc đã làm |
+| ----------------------- | -------------- | --------------- |
+| Đồng Văn Quyến      | 2A202603769    |                 |
+| Nguyễn Thành Công    | 2A202603789    |                 |
+| Trần Trọng Đức Tài | 2A202603732    |                 |
 
 ## §1. Lát cắt & phạm vi
 
 ### 1.1 Lát cắt tính năng (Single Slice)
+
 > **Lát cắt:** Trong **Đặt chỗ của tôi**, khi **hành khách** vừa nhận tin chuyến bay bị huỷ và nhắn hỏi, **AI đề xuất và giữ chỗ chuyến thay thế, hỏi lại cho rõ, đổi vé, hay chuyển nhân viên**, để khách tới nơi kịp mà không mất vé hay tiền vì một thao tác không đảo lại được.
 
 | Thành tố | Chi tiết xác định |
+
 | Thành tố                      | Chi tiết xác định                                                                               |
 | ------------------------------- | --------------------------------------------------------------------------------------------------- |
 | **Sản phẩm**            | Đặt chỗ của tôi (mô phỏng ứng dụng Traveloka)                                              |
