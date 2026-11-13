@@ -16,6 +16,9 @@
 - Bằng chứng: cột "AI có thể sai thế nào" trỏ về một tool hoặc một dòng dữ liệu của track (hoặc chỗ dữ liệu không có).
 - Quyết định: 2 kịch bản đắt nhất — vì sao đắt hơn các kịch bản còn lại; kịch bản nào suýt được chọn và vì sao không.
 
+| tin người dùng nhắn | lớp | AI có thể sai thế nào | một sản phẩm tốt nên làm gì | nhãn
+
+
 ## §3. Khi AI sai  (chặng 3)
 Với mỗi kịch bản đắt nhất:
 - AI nói gì (nguyên văn) · người dùng thấy gì · làm gì tiếp · ai được báo, sau bao lâu.
