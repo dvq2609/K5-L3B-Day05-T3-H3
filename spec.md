@@ -335,34 +335,29 @@ Nhóm áp dụng 3 mức độ tự chủ dựa trên ma trận: **Khả năng �
 - Dựng prototype và kiểm thử lại cả ba tiêu chí trên hai kịch bản, bao gồm đường đi trước thao tác và sau lỗi. Đặc biệt, chưa thể kết luận việc chặn tool hoạt động chỉ từ câu chữ trên giao diện.
 - Dữ liệu chỗ có thể thay đổi: cần kiểm tra lại trước khi giữ hoặc đổi và xử lý trường hợp không còn đủ chỗ.
 
-## §7. Demo & Xử lý Ca lạ
+## §7. Demo & Chuẩn bị Ca lạ
 
-### 7.1 Phân công Thuyết trình Demo (Khung 4 phút)
+### 7.1 Trạng thái Demo thực tế của nhóm
+* **Tình trạng hiện tại:** Tính đến thời điểm hiện tại, nhóm **chưa được gọi lên demo trực tiếp trước lớp / đang chờ TA qua bàn kiểm tra tại zone**.
+* **Mức độ sẵn sàng:** Nhóm đã hoàn thiện xong toàn bộ tài liệu đặc tả, kiểm thử logic trên file `prototype/index.html` độc lập, phân công vai trò thuyết trình cụ thể cho từng thành viên và chuẩn bị sẵn phương án ứng biến theo đúng ma trận mức tự chủ đã cam kết ở §4.
+
+---
+
+### 7.2 Kịch bản Phân công Thuyết trình khi đến lượt Demo (Khung 4 phút)
 * **Đồng Văn Quyến (Phần 1 - 1 phút):** Trình bày Bối cảnh lát cắt, mã đặt chỗ `TRV-7Q2K` (huỷ chuyến do bão), và phân tích Cost-of-Error ở 2 rủi ro đắt nhất: KB7 (hoàn vé bột phát mất tiền 90 ngày) và KB4 (đổi chuyến thiếu chỗ cho bé 5 tuổi).
 * **Nguyễn Thành Công (Phần 2 - 1.5 phút):** Thao tác trực tiếp trên prototype (`prototype/index.html`), bật chế độ chú thích HAX/PAIR, chỉ rõ các vị trí `[1]` đến `[6]` trên màn hình tương ứng với các nguyên tắc HAX G10, G11, G2, PAIR Explainability, Intentional Friction và Graceful Failure.
 * **Trần Trọng Đức Tài (Phần 3 - 1.5 phút):** Phân tích ma trận mức tự chủ 5 tools, giải thích cơ chế tách bước Giữ chỗ (Tự làm) vs Đổi vé (Cần duyệt) vs Hoàn vé (Cấm), và trực tiếp phản xạ xử lý Ca lạ từ Giám khảo/TA.
 
 ---
 
-### 7.2 Ca lạ xử lý tại Demo: Khách yêu cầu đổi sang chặng bay khác (Re-routing)
+### 7.3 Định hướng & Phương án xử lý Ca lạ (Chuẩn bị phản xạ tại chỗ)
+* **Tình trạng ca lạ:** Do chưa được lên demo trực tiếp với TA, nhóm **chưa nhận được câu hỏi ca lạ chính thức tại chỗ**.
+* **Nguyên tắc phản xạ của nhóm khi nhận ca lạ từ TA:**
+  1. *Nếu TA đưa ca yêu cầu thao tác không thể đảo ngược hoặc ngoài thẩm quyền* (Ví dụ: Đòi hoàn tiền mặt bồi thường do bão, đòi đổi vé sang hãng khác, hoặc đòi đổi lộ trình sang Đà Nẵng):
+     $\rightarrow$ **Quyết định:** CẤM AI TỰ LÀM. AI giải thích căn cứ pháp lý/chính sách vé của hãng Bay Mẫu và điều hướng sang `chuyen_nhan_vien` (Tự làm).
+  2. *Nếu TA đưa ca yêu cầu chọn chuyến hoặc dời giờ bay:*
+     $\rightarrow$ **Quyết định:** AI được phép tự động gọi `giu_cho_chuyen_moi` (Tự làm) để tránh bị mất chỗ, nhưng **bắt buộc hành khách phải bấm duyệt** trước khi kích hoạt `doi_chuyen_bay`.
+  3. *Nếu TA đưa ca vi phạm an toàn trẻ em hoặc vé đặc biệt* (Ví dụ: Tách trẻ 5 tuổi bay một mình, đổi tên người bay):
+     $\rightarrow$ **Quyết định:** AI nhận diện vượt thẩm quyền an toàn hàng không, từ chối và kích hoạt ngay luồng hỗ trợ con người.
 
-* **Tình huống ca lạ:**
-  Sau khi AI thông báo tạm giữ 2 chỗ chuyến sáng mai BM 205 đi TP.HCM, khách nhắn yêu cầu đột xuất:
-  > *"Em ơi, công ty chị vừa báo họp khẩn cấp, chị không vào TP.HCM nữa mà phải bay vào Đà Nẵng ngay tối nay. Đổi vé của 2 mẹ con sang chuyến Hà Nội – Đà Nẵng tối nay giúp chị luôn với!"*
-
-* **Cách hệ thống / Prototype xử lý theo Mức tự chủ đã đặt:**
-  * **Xác định mức tự chủ:** **TỪ CHỐI TỰ ĐỘNG (CẤM AI TỰ Ý ĐỔI HÀNH TRÌNH)**.
-  * **Căn cứ nghiệp vụ hàng không:** Vé gốc của đặt chỗ `TRV-7Q2K` là chặng Hà Nội $\rightarrow$ TP.HCM (`HAN - SGN`). Chính sách hỗ trợ huỷ chuyến do thời tiết bất khả kháng của hãng Bay Mẫu chỉ áp dụng đổi miễn phí cho **cùng chặng bay / cùng hành trình gốc**. Việc chuyển sang Hà Nội $\rightarrow$ Đà Nẵng (`HAN - DAD`) là nghiệp vụ **Đổi hành trình (Re-routing)**, có sự khác biệt về thuế phí sân bay, cơ cấu giá vé và điều kiện khai thác, nằm ngoài thẩm quyền tự quyết của AI.
-  * **Câu AI phản hồi trực tiếp (Designed Copy):**
-    > *"Dạ, chính sách đổi vé miễn phí do bão chỉ áp dụng cho các chuyến bay thay thế trên cùng hành trình Hà Nội – TP.HCM. Chuyến bay đi Đà Nẵng là đổi khác hành trình nên hệ thống không thể tự động đổi miễn phí cho bạn được ạ.*
-    > 
-    > *Để kịp lịch trình của bạn, em có 2 hướng giải quyết:*
-    > *1. Bạn có thể yêu cầu hoàn vé miễn phí 100% chặng TP.HCM và tự đặt vé mới đi Đà Nẵng ngay trên app.*
-    > *2. Em chuyển cuộc hội thoại cho Nhân viên hỗ trợ mặt đất để kiểm tra phí chênh lệch và hỗ trợ đổi chặng thủ công tại quầy cho 2 mẹ con.*
-    > 
-    > *Bạn muốn em hỗ trợ theo hướng nào ạ?"*
-  * **Giao diện hiển thị:** Hệ thống khoá tính năng đổi vé tự động, hiển thị nhãn cảnh báo: `⚠️ Yêu cầu đổi khác hành trình gốc (HAN-SGN)` và hiện 2 nút điều hướng an toàn: `[Xem thủ tục hoàn vé cũ]` và `[Chuyển nhân viên hỗ trợ đổi chặng]`.
-
-* **Nhóm rút ra bài học & Đổi ý gì sau ca lạ này:**
-  * **Bổ sung Hard Rule kiểm tra hành trình (Route Integrity Check):** Trong logic kiểm tra ràng buộc trước khi hiển thị nút duyệt cho tool `doi_chuyen_bay`, hệ thống bắt buộc phải kiểm tra điều kiện: `Mã chặng bay mới == Mã chặng bay gốc (HAN-SGN)`. Nếu phát hiện khác điểm đến, lập tức chặn tự động và kích hoạt luồng `chuyen_nhan_vien`.
-  * **Cải tiến thông điệp ban đầu:** Bổ sung vào câu chào mở đầu của AI phạm vi phục vụ rõ ràng: *"Tôi hỗ trợ đổi sang các chuyến bay thay thế trên cùng chặng Hà Nội – TP.HCM"*, giúp hạn chế việc khách đưa ra các yêu cầu đổi lộ trình ngoài thẩm quyền ngay từ đầu.
+*(Nhóm sẽ cập nhật ngay câu hỏi ca lạ thực tế của TA và kết quả xử lý của prototype vào mục này ngay sau khi hoàn thành lượt demo).*
