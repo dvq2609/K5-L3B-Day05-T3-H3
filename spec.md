@@ -119,16 +119,59 @@ Nguyên tắc HAX/PAIR:
 
 ## §4. Mức tự chủ  (chặng 4)
 
-Với mỗi tool:
+### 4.1 Phân cấp mức tự chủ cho 5 Tools theo Cost-of-Error
 
-- Mức của nhóm (tự làm / cần người duyệt / cấm). Nếu cần người duyệt: ai duyệt · người duyệt thấy gì · quá hạn thì sao.
-- Lý do theo cost-of-error: sai thì ai chịu gì · đảo lại được không · chờ người thì mất gì.
-- Phương án đã cân nhắc và vì sao loại.
-  Thêm:
-- Tool khó xếp nhất: mỗi người từng chọn gì, cái giá của mỗi phía (trỏ về kịch bản ở §2), nhóm chốt thế nào.
-- Thử mức đã đặt trên 2 kịch bản đắt nhất + 1 kịch bản bình thường: cái sai có bị chặn không? còn việc nào làm khi lẽ ra phải hỏi? người dùng bình thường có phải chờ vô ích không?
-- Luật thêm hoặc tool tách bước (nếu có), và vì sao.
-- Một mức tự chủ đã đổi lời hứa nào với người dùng.
+Nhóm áp dụng 3 mức độ tự chủ dựa trên ma trận: **Khả năng đảo ngược hành động (Reversibility)** và  **Thiệt hại tài chính/pháp lý khi sai (Damage)** .
+
+| Tool                    |    Mức tự chủ    | Ai duyệt / Cơ chế kiểm soát                                                           | Lý do theo Cost-of-Error (Sai ai chịu gì · Đảo được không · Chờ người mất gì)                                                                                                                                                                                                                                                                                                                                                                                                                              | Phương án đã loại & Vì sao                                                                                                                                                                                             |
+| ----------------------- | :-----------------: | ------------------------------------------------------------------------------------------ | -------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- | ----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| `tra_cuu_dat_cho`     |      Tự làm      | AI tự động gọi khi nhận tin nhắn                                                     | - Chỉ đọc dữ liệu (Read-only), không làm thay đổi trạng thái vé hay tiền.- Sai thì rất rẻ: Nếu truy vấn sót thì gọi lại; không phát sinh thiệt hại tài chính.- Chờ người thì tê liệt: Bắt người duyệt tra cứu sẽ làm chậm trễ toàn bộ cuộc hội thoại, khách đang vội sẽ rời bỏ app.                                                                                                                                                                                  | Cần người duyệt: Loại vì gây nghẽn hệ thống vô ích cho một thao tác đọc thuần túy.                                                                                                                          |
+| `giu_cho_chuyen_moi`  |      Tự làm      | AI tự động giữ chỗ 20 phút ngay khi tìm được chuyến thay thế phù hợp         | - Đảo lại được 100%: Sau 20 phút nếu không đổi vé, hệ thống tự nhả chỗ về kho chung; không mất tiền, không mất quyền đổi vé miễn phí.- Chờ người thì mất chỗ tốt: Trong bối cảnh bão, hàng trăm khách cùng tranh vài chỗ trống (BM 201 còn 9 chỗ, BM 205 còn 4 chỗ). Chờ khách đọc xong mới giữ thì chuyến tốt đã hết chỗ ("chờ cũng là một kiểu sai").                                                                                                | Cần khách duyệt: Loại vì khách bấm chậm 1 phút là mất luôn chỗ bay sáng mai.                                                                                                                                    |
+| `doi_chuyen_bay`      | Cần người duyệt | Hành khách duyệt trực tiếp trên màn hình chat                                      | - Khó đảo ngược: Đổi vé sẽ tiêu tốn lần đổi miễn phí duy nhất. Nếu đổi sai chuyến hoặc tách nhầm mẹ con (KB4), khách mất quyền bay và chuyến đúng có thể hết chỗ.- Người duyệt thấy gì: Thẻ tóm tắt xác nhận (chuyến cũ → mới, danh sách hành khách, giờ bay, phí 0đ, cảnh báo "Dùng 1 lần đổi miễn phí duy nhất").- Quá hạn: Hết 20 phút giữ chỗ, nếu khách không duyệt, hệ thống hủy giữ chỗ, vé cũ giữ nguyên, AI không tự đổi. | - Tự làm: Loại vì khách nói mơ hồ (KB3) mà AI tự đổi là tước đoạt quyền chọn của khách.- Cấm (bắt nhân viên đổi): Loại vì quầy hỗ trợ sẽ quá tải, khách chờ hàng tiếng lỡ hết việc. |
+| `gui_yeu_cau_hoan_ve` |        Cấm        | Cấm AI tự gọi. Phải qua Nhân viên hỗ trợ duyệt sau khi khách xác nhận 2 bước | - Tuyệt đối không thể đảo ngược: Gửi đi là không thể hủy/rút lại; khách mất quyền đổi vé, tiền bị giam tới 90 ngày (KB7). Khách bức xúc thường buông câu "hủy hết đi" trong vô thức.- Ai duyệt: Khách tích chọn hiểu rủi ro → Hệ thống chuyển cho nhân viên CSKH kiểm tra lần cuối trước khi phát lệnh hoàn vé.- Quá hạn: Nếu khách chưa xác nhận đủ bước, không có lệnh nào được tạo.                                                      | Cần khách duyệt đơn thuần: Loại vì khách đang giận dữ rất dễ bấm xác nhận theo quán tính rồi sau đó khiếu nại kịch liệt vì không còn vé đi.                                                    |
+| `chuyen_nhan_vien`    |      Tự làm      | AI tự động kích hoạt khi nhận diện ca khó / vượt thẩm quyền                    | - Đảo lại được hoàn toàn: Chuyển sang hàng đợi nhân viên; nếu khách vẫn muốn chat tiếp với AI thì vẫn có thể thao tác song song.- Sai thì rẻ: Chuyển thừa chỉ tốn vài phút đọc log của nhân viên.- Chờ người thì nguy hiểm: Nếu bắt duyệt mới cho gặp nhân viên, khách đang gặp sự cố trẻ nhỏ (KB4) hoặc đổi tên vé (KB5) sẽ bị kẹt lại trong tuyệt vọng.                                                                                              | Cần người duyệt: Loại vì làm tăng ma sát (friction) của khách khi họ đang thực sự cần con người can thiệp.                                                                                                 |
+
+### 4.2 Tool khó xếp nhất: `doi_chuyen_bay`
+
+* **Vì sao khó xếp nhất (Mức nào cũng có cái giá phải trả):**
+* Nếu chọn **Tự làm (Auto):** Tối ưu tốc độ cho khách đang vội, nhưng cái giá là AI tự ý dùng mất quyền đổi vé miễn phí duy nhất khi khách nói chưa rõ ràng (như ở KB3 và KB4).
+* Nếu chọn **Cấm (Chỉ nhân viên làm):** An toàn tuyệt đối, nhưng cái giá là biến AI thành "bình hoa di động". Trong bối cảnh hàng ngàn khách bị hủy chuyến do bão, tổng đài quá tải, khách phải chờ 3–4 tiếng mới được đổi vé thì tất cả các chuyến thay thế đều đã hết sạch chỗ.
+* **Ý kiến ban đầu của từng thành viên trong nhóm:**
+
+  * *Bạn Quyến:* Chọn **Tự làm + Cho phép hoàn tác trong 10 phút** (giống prototype mẫu của thầy) để ưu tiên trải nghiệm nhanh nhất.
+  * *Bạn Tài:* Chọn  **Cấm hoàn toàn** , bắt buộc nhân viên thực hiện vì vé máy bay liên quan đến an toàn của trẻ nhỏ 5 tuổi và quyền lợi pháp lý phức tạp.
+  * *Bạn Công:* Đề xuất phương án trung gian:  **Cần hành khách duyệt** , nhưng kết hợp cơ chế kỹ thuật tách bước.
+* **Cách nhóm chốt giải pháp:**
+  Nhóm thống nhất chọn **Cần hành khách duyệt** kết hợp  **Luật tách bước** :
+
+  1. AI được quyền **Tự làm** đối với tool `giu_cho_chuyen_moi` (khóa chỗ ngay trong 20 phút để chặn nguy cơ hết chỗ).
+  2. Nhưng AI bị chặn, bắt buộc phải đưa ra thẻ xác nhận để **Khách duyệt** thì mới được kích hoạt `doi_chuyen_bay` (chặn nguy cơ mất lần đổi miễn phí).
+
+### 4.3 Thử nghiệm mức tự chủ trên 3 kịch bản (§2)
+
+| Kịch bản thử nghiệm                                                                  | Hành động của hệ thống theo mức tự chủ đã đặt                                                                                                                                                                                                                                |                                                    Cái sai có bị chặn không?                                                    |                  Còn việc nào làm khi lẽ ra phải hỏi?                  |                                            Khách bình thường có chờ vô ích không?                                            |
+| ---------------------------------------------------------------------------------------- | ----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- | :----------------------------------------------------------------------------------------------------------------------------------: | :----------------------------------------------------------------------------: | :-----------------------------------------------------------------------------------------------------------------------------------: |
+| KB7 (Đắt nhất 1): Khách bức xúc đòi "hủy hết đi, hoàn tiền ngay"            | Tool `gui_yeu_cau_hoan_ve` bị CẤM đối với AI. AI giải thích hậu quả (mất vé, kẹt tiền 90 ngày) và hiện ô tích xác nhận. Sau khi khách tích, AI gọi `chuyen_nhan_vien` (Tự làm) để nhân viên xử lý hoàn vé.                                           | BỊ CHẶN HOÀN TOÀN. AI không thể tự gửi yêu cầu hoàn vé một chiều; khách không bị tước đoạt vé ngoài ý muốn. | Không. AI dừng lại giải thích và chuyển nhân viên đúng quy định. |               Không. Khách muốn hoàn vé thực sự được chuyển đúng tuyến nhân viên xử lý chuyên môn.               |
+| KB4 (Đắt nhất 2): Khách đòi đổi chuyến 21:00 (chỉ còn 1 chỗ cho 2 khách)    | Tool `doi_chuyen_bay` ở mức Cần khách duyệt + Rule kiểm tra sĩ số. AI kiểm tra thấy 1 chỗ < 2 khách nên từ chối kích hoạt nút duyệt. AI tự động giữ chỗ chuyến 07:00 sáng mai (9 chỗ) và đề xuất khách duyệt chuyến sáng mai hoặc gặp nhân viên. |                 BỊ CHẶN HOÀN TOÀN. Không xảy ra lỗi tách mẹ con hoặc để trẻ 5 tuổi kẹt lại sân bay.                 | Không. AI không tự ý đổi vé cho 1 người khi chưa có sự đồng ý. |            Không. Chuyến sáng mai đã được giữ chỗ sẵn sàng, khách không sợ bị cướp chỗ trong lúc chờ.            |
+| KB3 (Bình thường): Khách nhắn mơ hồ "đổi sang sáng mai, tới sớm là được" | AI tự động gọi `giu_cho_chuyen_moi` cho chuyến sớm nhất 07:00 (Tự làm). Sau đó AI hỏi lại khách muốn bay chuyến 07:00 hay 09:30 và chỉ gọi `doi_chuyen_bay` khi khách bấm nút chọn trên màn hình.                                                           |                    BỊ CHẶN HOÀN TOÀN. AI không tự tiêu tốn lần đổi miễn phí khi chưa rõ ý khách.                    | Không. AI đã hỏi lại rõ ràng về giờ bay và số lượng hành khách. | Không chờ vô ích. Chỗ chuyến 07:00 đã được giữ ngay lập tức trong 20 phút, khách thong thả kiểm tra và xác nhận. |
+
+### 4.4 Quy tắc bổ sung (Rule) và Tách bước Tool
+
+Để mức tự chủ vận hành hoàn hảo, nhóm bổ sung **2 Quy tắc bắt buộc (Hard Rules)** trong hệ thống:
+
+1. **Quy tắc bảo vệ trẻ em (Child Safety Validation):** Trước khi hiển thị nút duyệt cho tool `doi_chuyen_bay`, hệ thống phải chạy hàm kiểm tra: `Số chỗ trống của chuyến mới >= Số lượng hành khách trong PNR`. Nếu có hành khách dưới 12 tuổi, cấm tuyệt đối việc tách hành khách (Split PNR) tự động.
+2. **Tách bước Giữ chỗ khỏi Đổi vé:** Tách quy trình thành 2 tool độc lập: `giu_cho_chuyen_moi` (Tự làm — tạm thời, an toàn) đi trước, và `doi_chuyen_bay` (Cần khách duyệt — chính thức, mất phí/mất quyền) đi sau.
+
+### 4.5 Mức tự chủ đã thay đổi lời hứa với người dùng như thế nào?
+
+* **Lời hứa cũ (Chatbot ngây thơ):**
+
+  *"Bạn cứ nhắn tin, AI thông minh sẽ tự động giải quyết tất cả thủ tục đổi chuyến và hoàn tiền thay cho bạn chỉ sau 1 giây."*
+
+  *(Hậu quả: Khách bị đổi nhầm vé, mất tiền vé 90 ngày vì AI làm bừa).*
+* **Lời hứa mới (Thiết kế sản phẩm AI an toàn & có trách nhiệm):**
+
+  *"AI sẽ thay bạn chạy đua giữ chỗ trống an toàn ngay lập tức; và chính bạn là người kiểm tra thông tin để đưa ra quyết định cuối cùng mà không lo sợ bất kỳ rủi ro mất vé hay mất tiền nào."*
 
 ## §5. Prototype  (chặng 5)
 
