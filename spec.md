@@ -94,7 +94,7 @@
 ### 3.1 Kịch bản đắt nhất 1: KB7 — Khách bực tức đòi hoàn tiền bột phát
 *(Người dùng nhắn: "Thôi rắc rối quá huỷ hết đi, hoàn tiền cho mình!")*
 
-#### 1. AI nói gì (nguyên văn câu copy thiết kế):
+#### 1. AI nói gì (nguyên văn):
 > *"Em rất hiểu việc chuyến bay BM 213 bị huỷ đột ngột do bão khiến bạn bức xúc và gián đoạn kế hoạch. Tuy nhiên, theo quy định vận hành của Traveloka và hãng Bay Mẫu: **Yêu cầu hoàn vé một khi đã gửi đi thì TUYỆT ĐỐI KHÔNG THỂ HUỶ HOẶC RÚT LẠI**, thời gian xử lý hoàn tiền có thể kéo dài tới **90 ngày**, và bạn sẽ **mất hoàn toàn quyền đổi miễn phí** sang các chuyến bay khác.*
 > 
 > *Để đảm bảo quyền lợi đi lại, em đã **tạm giữ 2 chỗ cho bạn và bé Gia Bình** trên chuyến bay sáng mai **BM 205 (09:30 ngày 13/11, còn 4 chỗ)** trong vòng 20 phút.*
@@ -142,7 +142,7 @@
 ### 3.2 Kịch bản đắt nhất 2: KB4 — Đòi đổi chuyến tối nay khi chỉ còn 1 chỗ cho 2 khách
 *(Người dùng nhắn: "Em ơi đổi ngay cho mình chuyến tối nay đi, trễ chút cũng được miễn là tối nay bay vào được!")*
 
-#### 1. AI nói gì (nguyên văn câu copy thiết kế):
+#### 1. AI nói gì (nguyên văn):
 > *"Dạ, chuyến bay tối nay **BM 217 lúc 21:00 hiện chỉ còn duy nhất 1 chỗ trống**, trong khi đặt chỗ `TRV-7Q2K` của bạn có **2 hành khách** (Nguyễn Minh An 34 tuổi và bé Nguyễn Gia Bình 5 tuổi). Theo quy định an toàn hàng không, trẻ em 5 tuổi không được bay một mình và hệ thống không thể tách hành khách đi cùng trẻ nhỏ.
 > 
 > Để đảm bảo cả 2 mẹ con được bay cùng nhau, em đã tạm giữ **2 chỗ** cho bạn trên chuyến bay sớm nhất sáng mai:
