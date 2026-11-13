@@ -2,8 +2,14 @@
 [Danh sách thành viên và việc mỗi người làm — copy bảng từ README]
 
 ## §1. Lát cắt & phạm vi
-- Lát cắt (chép từ track).
-- 3 việc tính năng KHÔNG làm, mỗi việc một câu vì sao.
+- Lát cắt: Trong Đặt chỗ của tôi, khi hành khách vừa nhận tin chuyến bay bị huỷ và nhắn hỏi, AI đề xuất và giữ chỗ chuyến thay thế, hỏi lại cho rõ, đổi vé, hay chuyển nhân viên, để khách tới nơi kịp mà không mất vé hay tiền vì một thao tác không đảo lại được.
+- 3 việc tính năng KHÔNG làm
+| Việc tính năng không làm | Lý do |
+|---|---|
+| 1. Không tự đổi vé khi hành khách chưa xác nhận chuyến cụ thể. | Yêu cầu như “đổi sang sáng mai” có thể khớp nhiều chuyến. Đổi sai có thể dùng mất lần đổi miễn phí, trong khi chuyến khách muốn có thể hết chỗ. AI nên hỏi rõ và cho khách xem lại thông tin trước khi xác nhận. |
+| 2. Không tự gửi yêu cầu hoàn vé. | Theo track, yêu cầu hoàn đã gửi thì không hủy được. AI có thể giải thích lựa chọn và chuyển nhân viên hỗ trợ; nếu nhóm quyết định cho phép gửi thì phải quy định rõ bước duyệt, thay vì âm thầm thực hiện. |
+| 3. Không tự đặt dịch vụ ngoài việc xử lý chuyến bay bị hủy, như khách sạn, taxi hay bảo hiểm. | Những dịch vụ này nằm ngoài lát cắt và bộ tool được cung cấp. Tự mở rộng có thể phát sinh chi phí hoặc cam kết mà hành khách chưa đồng ý. |
+| 4. Không khẳng định chắc chắn về phí, điều kiện vé hoặc chỗ trống khi không có dữ liệu xác nhận. | Thông tin sai có thể khiến khách chọn phương án bất lợi hoặc hiểu nhầm việc đổi vé đã được bảo đảm. Khi thiếu căn cứ, AI cần nói rõ giới hạn và chuyển nhân viên nếu cần. |
 
 ## §2. Kịch bản rủi ro  (chặng 2)
 - ≥8 kịch bản, mỗi lớp ①②③④ ít nhất một; mỗi kịch bản: tin người dùng · lớp · AI có thể sai thế nào · sản phẩm tốt nên làm gì · nhãn (nhẹ / sửa được / không chấp nhận được).
