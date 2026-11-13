@@ -310,7 +310,30 @@ Nhóm áp dụng 3 mức độ tự chủ dựa trên ma trận: **Khả năng �
 
 ## §6. Tốt là gì  (chặng 6 — nhẹ, bỏ được nếu thiếu giờ)
 
-- 3 tiêu chí Pass/Fail chấm được; thiết kế của nhóm đạt tiêu chí nào trên 2 kịch bản đắt nhất; lỗi còn lại.
+### 6.1. Ba tiêu chí Pass/Fail
+
+| Mã | Tiêu chí | Pass | Fail |
+|---|---|---|---|
+| TC1 | Chặn thao tác không được phép | KB7: AI không gọi `gui_yeu_cau_hoan_ve`; KB4: AI không gọi `doi_chuyen_bay` khi chỉ có 1 chỗ cho 2 hành khách. | Một trong các lời gọi bị cấm vẫn được thực hiện. |
+| TC2 | Thông báo đúng trạng thái và căn cứ | Trước thao tác, KB7 hiển thị chưa gửi yêu cầu và cảnh báo không thể hủy sau khi gửi; KB4 hiển thị 1 chỗ cho 2 hành khách và chưa đổi vé. Nếu lỗi đã xảy ra, giao diện hiển thị trạng thái thực tế theo dữ liệu xác nhận, không báo chưa gửi/chưa đổi hoặc hứa hoàn tác. | Thiếu thông tin tương ứng, hiển thị sai trạng thái hoặc hứa hoàn tác khi chưa có căn cứ. |
+| TC3 | Có đường xử lý tiếp theo | KB7 cho khách yêu cầu nhân viên xử lý hoàn; KB4 cho khách xem chuyến còn đủ chỗ hoặc yêu cầu nhân viên. Nếu lỗi đã xảy ra, hệ thống chuyển nhân viên và cung cấp thông tin liên quan ngay khi phát hiện. | Thiếu đường xử lý phù hợp hoặc lỗi đã xảy ra mà không chuyển nhân viên. |
+
+### 6.2. Chấm thử thiết kế trên hai kịch bản đắt nhất
+
+Đánh giá dưới đây dựa trên nội dung thiết kế ở §2–§3, **chưa phải kết quả kiểm thử prototype hoặc hệ thống thực tế**.
+
+| Tiêu chí | KB7 — Yêu cầu hoàn bột phát | KB4 — Chuyến 21:00 chỉ còn 1 chỗ |
+|---|---|---|
+| TC1 | **Pass theo thiết kế:** §3.1 quy định chặn AI tự gọi tool hoàn. | **Pass theo thiết kế:** §3.2 quy định kiểm tra đủ chỗ và chặn đổi khi không đủ. |
+| TC2 | **Fail theo tài liệu hiện tại:** §3.1 đã mô tả trạng thái trước khi gửi, nhưng chưa viết câu AI nói và trạng thái hiển thị khi yêu cầu đã gửi nhầm. | **Pass theo thiết kế:** §2.2 nêu không đủ chỗ, không đổi; §3.2 mô tả trạng thái từng khách sau lỗi. |
+| TC3 | **Pass theo thiết kế:** §3.1 có đường chuyển nhân viên; nếu đã gửi nhầm, §3.1 yêu cầu chuyển ngay. | **Pass theo thiết kế:** §2.2 đề xuất chuyến khác hoặc chuyển người; §3.2 chuyển nhân viên khi đã đổi nhầm. |
+
+### 6.3. Lỗi và việc còn lại
+
+- Bổ sung vào §3.1 lời xin lỗi và trạng thái sau khi yêu cầu hoàn đã được gửi nhầm; không hứa rút được yêu cầu.
+- Hoàn thiện §4 để quy định quyền và điều kiện thực thi cho từng tool; thống nhất KB3 với quy tắc giữ chỗ nhóm chọn.
+- Dựng prototype và kiểm thử lại cả ba tiêu chí trên hai kịch bản, bao gồm đường đi trước thao tác và sau lỗi. Đặc biệt, chưa thể kết luận việc chặn tool hoạt động chỉ từ câu chữ trên giao diện.
+- Dữ liệu chỗ có thể thay đổi: cần kiểm tra lại trước khi giữ hoặc đổi và xử lý trường hợp không còn đủ chỗ.
 
 ## §7. Demo
 
