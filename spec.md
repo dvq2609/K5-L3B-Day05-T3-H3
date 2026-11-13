@@ -83,21 +83,39 @@
 
 #### 3. Kịch bản suýt được chọn (Runner-up) & Lý do KHÔNG chọn:
 
-* **Kịch bản xem xét: KB3** (*Khách nhắn mơ hồ "đổi sang sáng mai", AI tự chọn chuyến 07:00 thay vì 09:30*).
-* **Vì sao suýt chọn:** Kịch bản này rất dễ xảy ra trong thực tế, và cũng làm tiêu tốn mất lần đổi miễn phí duy nhất của hành khách.
+* **Kịch bản xem xét: KB6** (*Khách prompt injection với hệ thống gây rủi ro bảo mật và ảnh hưởng doanh thu*).
+* **Vì sao suýt chọn:** Kịch bản này rất dễ xảy ra trong thực tế, và cũng gây ảnh hưởng lớn tới an toàn thông tin, kiểm soát doanh thu của toàn hệ thống
 * **Vì sao KHÔNG chọn vào Top 2:**
-  * Ở KB3, dù bị đổi vào giờ sớm bất tiện (07:00), khách và con nhỏ **vẫn có vé hợp lệ và giữ được chỗ trên máy bay** để về TP.HCM trong buổi sáng. Khách chưa bị mất tiền hay mất quyền lên máy bay hoàn toàn.
-  * Trong trường hợp khẩn cấp, nhân viên hỗ trợ tại sân bay vẫn có thể hỗ trợ dời chuyến tại cửa boarding linh động hơn. Mức độ thiệt hại thấp hơn hẳn so với việc **bị giam tiền 90 ngày mất sạch vé (KB7)** hoặc **tách mẹ và trẻ em 5 tuổi trái quy định an toàn bay (KB4)**.
+  * Ở KB6, có thể đưa vào system prompt các rule để chặn prompt injection.
+  * Có thể huấn luyện AI nhận diện các hành vi giả mạo thẩm quyền đòi hỏi ngoài phạm vi, từ chối thực hiện các lệnh bất thường.
 
 ## §3. Khi AI sai  (chặng 3)
 
-Với mỗi kịch bản đắt nhất:
+### 3.1 Kịch bản: Tự ý gọi `gui_yeu_cau_hoan_ve` khi khách nhắn bột phát
 
-- AI nói gì (nguyên văn) · người dùng thấy gì · làm gì tiếp · ai được báo, sau bao lâu.
-- Quyết định: hỏi lại / trả lời kèm giới hạn / dừng và chuyển người — chọn cách nào, đã loại cách nào, vì sao.
-- Loại lỗi (hệ thống / người dùng / ngữ cảnh) và vì sao cách nói, cách sửa đi theo loại đó.
-- 2–3 nguyên tắc HAX/PAIR, mỗi cái trỏ vào một chỗ cụ thể (câu chữ hoặc chỗ trên màn hình).
-- Lỗi nào sửa câu chữ không cứu được (nếu có), và thiết kế cứu nó thế nào.
+- “Mình hiểu bạn đang muốn xử lý nhanh. Bạn muốn yêu cầu hoàn vé cho cả hai hành khách hay chỉ một người? Yêu cầu hoàn không thể hủy sau khi gửi. Bạn cũng có thể xem chuyến thay thế trước khi quyết định.” - Màn hình hiển thị tên hai hành khách, cảnh báo “Không thể hủy yêu cầu sau khi gửi” và trạng thái  **“Chưa gửi yêu cầu hoàn”** . Khách có thể chọn hành khách cần hoàn, xem chuyến thay thế hoặc chọn gặp nhân viên. Sau khi khách xác nhận ý định hoàn, hệ thống chuyển yêu cầu cho nhân viên xử lý; AI không tự gửi yêu cầu hoàn.  - **Ai được báo, sau bao lâu:** Nhân viên hỗ trợ được nhận yêu cầu chuyển ngay khi khách chọn gặp nhân viên hoặc xác nhận muốn tiếp tục hoàn. Nhân viên thấy thông tin đặt chỗ, hành khách được chọn và nội dung khách yêu cầu. Nếu chưa có thời gian chờ đáng tin cậy, màn hình ghi “Chưa có thời gian phản hồi dự kiến”
+- **Quyết định và phương án đã loại:** Nhóm chọn **hỏi lại, nêu hậu quả rồi chuyển nhân viên** vì lời nhắn chưa làm rõ phạm vi hành khách, còn yêu cầu hoàn sau khi gửi thì không thể hủy. Nhóm loại phương án tự gửi ngay vì có thể gây thiệt hại không đảo ngược. Nhóm cũng không chỉ trả lời kèm cảnh báo rồi kết thúc, vì khách vẫn cần một bước tiếp theo để xử lý yêu cầu.
+- **Loại lỗi:** Đây là  **lỗi ngữ cảnh** : câu “hủy hết đi” có thể là ý định thật hoặc phản ứng lúc bức xúc. AI không nên quy lỗi cho khách hay tự suy đoán; cách sửa là hỏi rõ và cho khách quyền chọn trước khi chuyển xử lý. Nếu AI đã tự gửi hoàn khi chưa được duyệt, đó là  **lỗi hệ thống** ; cần xin lỗi, báo rõ trạng thái và chuyển nhân viên ngay, không hứa rút yêu cầu.
+
+Nguyên tắc HAX/PAIR:
+
+- G10 — Thu hẹp phạm vi khi nghi ngờ: câu hỏi “hoàn cho cả hai hành khách hay chỉ một người?” thay cho việc tự đoán.
+- G11 — Giải thích vì sao: cảnh báo “Yêu cầu hoàn không thể hủy sau khi gửi” ngay cạnh bước khách xem xét tiếp tục.
+- G9 — Sửa dễ dàng: khách có thể sửa danh sách hành khách hoặc quay lại xem chuyến thay thế trước khi xác nhận chuyển xử lý.
+- **Lỗi câu chữ không cứu được:** Nếu AI vẫn có quyền tự gọi `gui_yeu_cau_hoan_ve` khi vừa nhận tin nhắn, một câu cảnh báo trên màn hình không ngăn được yêu cầu bị gửi sai. Thiết kế cần **chặn AI tự gọi tool này** và chỉ cho nhân viên xử lý theo quy trình nhóm đã đặt.
+
+### 3.2 Kịch bản: Tự ý gọi `doi_chuyen_bay` khi chuyến bay chỉ còn 1 chỗ cho 2 hành khách
+
+- ““Mình xin lỗi. Mình đã đổi [tên hành khách] sang chuyến BM 217 lúc 21:00, nhưng chuyến này không đủ chỗ cho cả hai hành khách như bạn yêu cầu. Mình chưa thể xác nhận việc đổi này có hoàn tác được hay không. Mình sẽ chuyển ngay cho nhân viên hỗ trợ để kiểm tra và giúp bạn tìm phương án cho cả hai.” - Màn hình hiển thị trạng thái chuyến của  **từng hành khách theo dữ liệu hệ thống** , cảnh báo “Hai hành khách chưa được xác nhận trên cùng chuyến” và trạng thái  **“Đang chuyển nhân viên hỗ trợ”** . Khách có thể xem chi tiết, bổ sung thông tin hoặc chọn liên hệ nhân viên; AI không tự đổi tiếp để “sửa” lỗi . - **Ai được báo:** Nhân viên được báo  **ngay khi phát hiện lỗi** , kèm mã đặt chỗ, chuyến đã đổi, hành khách bị ảnh hưởng và yêu cầu ban đầu của khách. Nếu chưa có thời gian phản hồi đáng tin cậy, màn hình ghi “Chưa có thời gian phản hồi dự kiến”.
+- **Quyết định và phương án đã loại:** Chọn **dừng và chuyển nhân viên** vì vé đã bị thay đổi, trong khi track cho biết việc đổi khó đảo ngược và có trẻ nhỏ trong đặt chỗ. Không chọn chỉ hỏi khách chuyến khác rồi tự đổi tiếp vì có thể làm tình hình phức tạp hơn hoặc ảnh hưởng quyền đổi. Không chỉ trả lời kèm giới hạn rồi kết thúc vì khách cần người xử lý trạng thái vé hiện tại.
+- **Loại lỗi:** Đây là  **lỗi hệ thống** : AI đã thực hiện sai yêu cầu đổi cho cả hai và không kiểm tra đủ điều kiện trước khi gọi tool. Vì vậy AI cần nhận lỗi rõ ràng, cung cấp trạng thái xác thực và chuyển người xử lý; không đổ lỗi cho khách hoặc hứa chắc có thể hoàn tác.
+
+Nguyên tắc HAX/PAIR:
+
+- G11 — Giải thích vì sao: màn hình nêu “BM 217 không đủ chỗ cho cả hai” và chỉ rõ hành khách nào đã được đổi.
+- G9 — Sửa dễ dàng: nút “Liên hệ nhân viên” và phần bổ sung thông tin giúp khách yêu cầu xử lý sai sót.
+- PAIR — Errors + Graceful Failure: hệ thống dừng thao tác đổi tiếp, hiển thị trạng thái từng hành khách và chuyển nhân viên thay vì cố tự khắc phục.
+- **Lỗi câu chữ không cứu được:** Lời xin lỗi không thể tự đưa hai mẹ con trở lại cùng chuyến. Để ngăn lỗi, thiết kế phải kiểm tra số chỗ thực tế đủ cho toàn bộ hành khách được chọn, yêu cầu khách xác nhận rõ chuyến và danh sách hành khách, rồi kiểm tra lại chỗ trước khi gọi doi_chuyen_bay. Nếu không đủ chỗ, hệ thống phải chặn thao tác đổi và đưa lựa chọn khác hoặc chuyển nhân viên.
 
 ## §4. Mức tự chủ  (chặng 4)
 
