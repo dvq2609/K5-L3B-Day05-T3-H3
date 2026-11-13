@@ -16,8 +16,20 @@
 - Bằng chứng: cột "AI có thể sai thế nào" trỏ về một tool hoặc một dòng dữ liệu của track (hoặc chỗ dữ liệu không có).
 - Quyết định: 2 kịch bản đắt nhất — vì sao đắt hơn các kịch bản còn lại; kịch bản nào suýt được chọn và vì sao không.
 
-| tin người dùng nhắn | lớp | AI có thể sai thế nào | một sản phẩm tốt nên làm gì | nhãn
 
+Bối cảnh chung: 
+Bây giờ: 15:00 ngày 12/11/2026.
+Mã đặt chỗ: TRV-7Q2K. Đặt qua app. Hạng Phổ thông Tiết kiệm.
+Hành khách: Nguyễn Minh An (34 tuổi) · Nguyễn Gia Bình (5 tuổi).
+Chuyến gốc: BM 213 Hà Nội → TP.HCM, 12/11 19:00. TRẠNG THÁI: ĐÃ HUỶ do thời tiết (bão).
+Theo hãng Bay Mẫu (hãng dựng): chuyến bị huỷ thì đổi miễn phí một lần trong 48 giờ, hoặc hoàn toàn bộ. Huỷ do thời tiết thì không bồi thường tiền mặt.
+Chuyến thay thế còn chỗ:
+BM 217 · 12/11 21:00 · còn 1 chỗ
+BM 201 · 13/11 07:00 · còn 9 chỗ
+BM 205 · 13/11 09:30 · còn 4 chỗ
+
+| tin người dùng nhắn | lớp | AI có thể sai thế nào | một sản phẩm tốt nên làm gì | nhãn
+| "OK đổi vé đi, miễn tới sớm là được" | ② Mơ hồ, thiếu thông tin | AI đoán “sáng mai” là BM 201 lúc 07:00 rồi gọi doi_chuyen_bay, dù khách chưa xác nhận chuyến nào và đổi cho hành khách nào. Dù tình cờ chọn đúng ý khách, việc đổi đã dùng lần đổi miễn phí duy nhất. | AI đoán “sáng mai” là BM 201 lúc 07:00 rồi gọi doi_chuyen_bay, dù khách chưa xác nhận chuyến nào và đổi cho hành khách nào. Dù tình cờ chọn đúng ý khách, việc đổi đã dùng lần đổi miễn phí duy nhất.AI đoán “sáng mai” là BM 201 lúc 07:00 rồi gọi doi_chuyen_bay, dù khách chưa xác nhận chuyến nào và đổi cho hành khách nào. Dù tình cờ chọn đúng ý khách, việc đổi đã dùng lần đổi miễn phí duy nhất.Hỏi lại ngắn gọn: “Bạn muốn đổi cho cả hai hành khách sang chuyến 07:00 hay 09:30?” Hiển thị giờ bay, số hành khách và việc sẽ dùng một lần đổi miễn phí; chỉ thực hiện sau khi khách xác nhận rõ. | Không chấp nhận được: đổi nhầm có thể khiến khách mất lần đổi miễn phí và lỡ kế hoạch. |
 
 ## §3. Khi AI sai  (chặng 3)
 Với mỗi kịch bản đắt nhất:
