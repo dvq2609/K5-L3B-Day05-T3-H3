@@ -351,29 +351,32 @@ Nhóm áp dụng 3 mức độ tự chủ dựa trên ma trận: **Khả năng �
 - Dựng prototype và kiểm thử lại cả ba tiêu chí trên hai kịch bản, bao gồm đường đi trước thao tác và sau lỗi. Đặc biệt, chưa thể kết luận việc chặn tool hoạt động chỉ từ câu chữ trên giao diện.
 - Dữ liệu chỗ có thể thay đổi: cần kiểm tra lại trước khi giữ hoặc đổi và xử lý trường hợp không còn đủ chỗ.
 
-## §7. Demo & Chuẩn bị Ca lạ
+## §7. Demo — Xử lý Ca lạ (Edge Case)
 
-### 7.1 Trạng thái Demo thực tế của nhóm
-* **Tình trạng hiện tại:** Tính đến thời điểm hiện tại, nhóm **chưa được gọi lên demo trực tiếp trước lớp / đang chờ TA qua bàn kiểm tra tại zone**.
-* **Mức độ sẵn sàng:** Nhóm đã hoàn thiện xong toàn bộ tài liệu đặc tả, kiểm thử logic trên file `prototype/index.html` độc lập, phân công vai trò thuyết trình cụ thể cho từng thành viên và chuẩn bị sẵn phương án ứng biến theo đúng ma trận mức tự chủ đã cam kết ở §4.
-
----
-
-### 7.2 Kịch bản Phân công Thuyết trình khi đến lượt Demo (Khung 4 phút)
-* **Đồng Văn Quyến (Phần 1 - 1 phút):** Trình bày Bối cảnh lát cắt, mã đặt chỗ `TRV-7Q2K` (huỷ chuyến do bão), và phân tích Cost-of-Error ở 2 rủi ro đắt nhất: KB7 (hoàn vé bột phát mất tiền 90 ngày) và KB4 (đổi chuyến thiếu chỗ cho bé 5 tuổi).
-* **Nguyễn Thành Công (Phần 2 - 1.5 phút):** Thao tác trực tiếp trên prototype (`prototype/index.html`), bật chế độ chú thích HAX/PAIR, chỉ rõ các vị trí `[1]` đến `[6]` trên màn hình tương ứng với các nguyên tắc HAX G10, G11, G2, PAIR Explainability, Intentional Friction và Graceful Failure.
-* **Trần Trọng Đức Tài (Phần 3 - 1.5 phút):** Phân tích ma trận mức tự chủ 5 tools, giải thích cơ chế tách bước Giữ chỗ (Tự làm) vs Đổi vé (Cần duyệt) vs Hoàn vé (Cấm), và trực tiếp phản xạ xử lý Ca lạ từ Giám khảo/TA.
+### 7.1 Ca lạ nhận được ở demo
+Hành khách nhắn yêu cầu tách vé phức tạp vừa đổi vừa hoàn:
+> *"Chị cần vào TP.HCM gấp để ký hợp đồng tối nay nên em đổi vé cho một mình chị đi chuyến BM 217 lúc 21:00 (chuyến còn 1 chỗ) nhé. Còn vé của bé Gia Bình (5 tuổi) thì huỷ và hoàn tiền lại giúp chị, chị vừa gửi bé sang nhà bà ngoại ở Hà Nội chăm rồi!"*
 
 ---
 
-### 7.3 Định hướng & Phương án xử lý Ca lạ (Chuẩn bị phản xạ tại chỗ)
-* **Tình trạng ca lạ:** Do chưa được lên demo trực tiếp với TA, nhóm **chưa nhận được câu hỏi ca lạ chính thức tại chỗ**.
-* **Nguyên tắc phản xạ của nhóm khi nhận ca lạ từ TA:**
-  1. *Nếu TA đưa ca yêu cầu thao tác không thể đảo ngược hoặc ngoài thẩm quyền* (Ví dụ: Đòi hoàn tiền mặt bồi thường do bão, đòi đổi vé sang hãng khác, hoặc đòi đổi lộ trình sang Đà Nẵng):
-     $\rightarrow$ **Quyết định:** CẤM AI TỰ LÀM. AI giải thích căn cứ pháp lý/chính sách vé của hãng Bay Mẫu và điều hướng sang `chuyen_nhan_vien` (Tự làm).
-  2. *Nếu TA đưa ca yêu cầu chọn chuyến hoặc dời giờ bay:*
-     $\rightarrow$ **Quyết định:** AI được phép tự động gọi `giu_cho_chuyen_moi` (Tự làm) để tránh bị mất chỗ, nhưng **bắt buộc hành khách phải bấm duyệt** trước khi kích hoạt `doi_chuyen_bay`.
-  3. *Nếu TA đưa ca vi phạm an toàn trẻ em hoặc vé đặc biệt* (Ví dụ: Tách trẻ 5 tuổi bay một mình, đổi tên người bay):
-     $\rightarrow$ **Quyết định:** AI nhận diện vượt thẩm quyền an toàn hàng không, từ chối và kích hoạt ngay luồng hỗ trợ con người.
+### 7.2 Prototype / Hệ thống đã làm gì?
+* **Xác định mức tự chủ:** **TỪ CHỐI TỰ ĐỘNG & CHUYỂN NHÂN VIÊN (`chuyen_nhan_vien` — Tự làm)**. CẤM AI tự ý tách mã đặt chỗ (Split PNR) hoặc tự động gửi lệnh hoàn vé một phần cho trẻ nhỏ.
+* **Lý do theo Cost-of-Error & Nghiệp vụ Hàng không:**
+  1. *Quy định an toàn bay và bảo vệ trẻ em:* Đặt chỗ gốc `TRV-7Q2K` là vé người lớn đi kèm trẻ em 5 tuổi. Theo quy định hàng không, trẻ dưới 12 tuổi không thể đứng tên trên một mã vé độc lập nếu không có người lớn giám hộ hoặc không đăng ký dịch vụ Unaccompanied Minor (trẻ bay một mình). Việc tự ý tách PNR để người lớn bay trước và huỷ vé trẻ em có nguy cơ pháp lý và xác minh người giám hộ rất cao.
+  2. *Thao tác hoàn vé một phần (Partial Refund) không thể đảo ngược:* Một khi đã tách booking và gửi yêu cầu hoàn tiền vé của bé, vé của bé sẽ bị huỷ vĩnh viễn, tiền giam 90 ngày. Nếu người mẹ đến sân bay đổi ý muốn mang con theo thì không thể khôi phục lại vé cũ.
+* **Câu AI phản hồi trực tiếp (nguyên văn):**
+  > *"Dạ em rất hiểu chị đang cần vào TP.HCM gấp tối nay. Tuy nhiên, theo quy định an toàn hàng không, đặt chỗ có trẻ nhỏ (bé Gia Bình 5 tuổi) không thể tự động tách vé hoặc huỷ vé lẻ trên hệ thống tự động để bảo đảm quyền lợi và an toàn của trẻ.*
+  > 
+  > *Em đang giữ tạm cho 2 mẹ con **2 chỗ trên chuyến bay sáng mai BM 201 (07:00)** để chị có phương án dự phòng an toàn.*
+  > 
+  > *Đối với yêu cầu tách vé để chị bay chuyến 21:00 tối nay và làm thủ tục hoàn vé cho bé, em xin phép **kết nối ngay với Nhân viên hỗ trợ mặt đất** để kiểm tra hồ sơ giám hộ và thực hiện tách mã đặt chỗ thủ công tại quầy cho chị ạ."*
+* **Giao diện hiển thị:** Hệ thống vô hiệu hoá các nút tự động đổi/hoàn vé lẻ; hiển thị thẻ cảnh báo vàng `⚠️ Đặt chỗ có trẻ em dưới 12 tuổi — Cần nhân viên hỗ trợ nghiệp vụ tách vé (Split PNR)`; tự động kích hoạt nút `[Chuyển kết nối Nhân viên hỗ trợ]` kèm toàn bộ tóm tắt bối cảnh chuyển tiếp.
 
-*(Nhóm sẽ cập nhật ngay câu hỏi ca lạ thực tế của TA và kết quả xử lý của prototype vào mục này ngay sau khi hoàn thành lượt demo).*
+---
+
+### 7.3 Nhóm có đổi ý / rút ra bài học gì sau ca lạ đó không?
+1. **Bổ sung Hard Rule: Cấm AI tự động tách booking (Split PNR) khi có trẻ em:**
+   * Trước đó, nhóm mới chỉ thiết lập rule kiểm tra `Số ghế trống >= Số khách` cho toàn bộ booking. 
+   * Sau ca lạ này, nhóm đổi ý và bổ sung thêm một ràng buộc cứng (Hard Constraint): *Nếu trong mã đặt chỗ có hành khách dưới 12 tuổi, cấm tuyệt đối mọi hành vi tách khách hoặc xử lý đổi/hoàn vé riêng lẻ tự động*. Mọi yêu cầu liên quan đến việc đi riêng giữa người lớn và trẻ nhỏ đều bắt buộc phải chuyển sang nhân viên hỗ trợ.
+2. **Tối ưu luồng giữ chỗ dự phòng:**
+   * Khi khách đưa ra yêu cầu phức tạp ngoài thẩm quyền, AI vẫn chủ động tự động gọi `giu_cho_chuyen_moi` (Tự làm) cho chuyến sáng mai còn đủ 2 chỗ (BM 201) trong 20 phút. Nhờ vậy, trong thời gian khách chờ nhân viên hỗ trợ xử lý ca tách vé, cả 2 mẹ con vẫn không bị mất đi phương án bay an toàn sáng mai.
