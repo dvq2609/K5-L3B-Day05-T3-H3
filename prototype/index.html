@@ -1,0 +1,887 @@
+<!doctype html>
+<html lang="vi">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Traveloka · Hỗ trợ chuyến bay bị huỷ</title>
+  <style>
+    :root {
+      --ink: #0f172a;
+      --mut: #64748b;
+      --line: #e2e8f0;
+      --bg: #f1f5f9;
+      --card: #ffffff;
+      --g: #059669;
+      --gb: #ecfdf5;
+      --a: #d97706;
+      --ab: #fffbeb;
+      --r: #dc2626;
+      --rb: #fef2f2;
+      --tvlk: #0194f3;
+      --tvlk-dark: #0070ba;
+    }
+    * { box-sizing: border-box; }
+    body {
+      margin: 0;
+      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+      color: var(--ink);
+      background: var(--bg);
+      font-size: 14.5px;
+      line-height: 1.5;
+    }
+
+    /* Top control bar for Demo / Testing */
+    .top-tester-bar {
+      background: #0f172a;
+      color: #f8fafc;
+      padding: 10px 20px;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      flex-wrap: wrap;
+      gap: 10px;
+      font-size: 13px;
+    }
+    .tester-left {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      flex-wrap: wrap;
+    }
+    .btn-test {
+      background: #1e293b;
+      color: #e2e8f0;
+      border: 1px solid #334155;
+      padding: 5px 12px;
+      border-radius: 6px;
+      cursor: pointer;
+      font-size: 12.5px;
+      transition: all 0.2s;
+    }
+    .btn-test.active {
+      background: var(--tvlk);
+      color: #fff;
+      border-color: var(--tvlk);
+      font-weight: 600;
+    }
+    .btn-test:hover:not(.active) { background: #334155; }
+    .tester-right {
+      display: flex;
+      align-items: center;
+      gap: 16px;
+    }
+    .tester-right label {
+      display: flex;
+      align-items: center;
+      gap: 6px;
+      cursor: pointer;
+      user-select: none;
+      color: #cbd5e1;
+    }
+
+    /* Main Container layout */
+    .layout-container {
+      display: flex;
+      justify-content: center;
+      align-items: flex-start;
+      gap: 28px;
+      padding: 24px;
+      max-width: 1280px;
+      margin: 0 auto;
+      transition: all 0.3s;
+    }
+
+    /* Phone Mockup Window */
+    .phone-wrapper {
+      width: 430px;
+      flex-shrink: 0;
+      background: #ffffff;
+      border-radius: 36px;
+      border: 8px solid #0f172a;
+      box-shadow: 0 20px 40px -15px rgba(0,0,0,0.15), 0 0 0 1px rgba(0,0,0,0.05);
+      overflow: hidden;
+      display: flex;
+      flex-direction: column;
+      height: 780px;
+    }
+
+    /* Traveloka App Header */
+    .app-header {
+      background: var(--tvlk);
+      color: #fff;
+      padding: 16px 18px 12px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+    }
+    .app-header-title {
+      font-size: 16px;
+      font-weight: 700;
+      letter-spacing: -0.2px;
+    }
+    .app-header-sub {
+      font-size: 11.5px;
+      opacity: 0.9;
+    }
+
+    /* Trip Status Bar */
+    .trip-alert {
+      background: #fef2f2;
+      border-bottom: 1px solid #fee2e2;
+      padding: 10px 16px;
+      font-size: 12.5px;
+      display: flex;
+      flex-direction: column;
+      gap: 3px;
+    }
+    .trip-alert-row {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }
+    .badge-cancelled {
+      background: #dc2626;
+      color: #fff;
+      font-weight: 700;
+      padding: 2px 7px;
+      border-radius: 4px;
+      font-size: 10.5px;
+      text-transform: uppercase;
+    }
+
+    /* Chat Messages Stream */
+    .chat-body {
+      flex: 1;
+      overflow-y: auto;
+      padding: 16px;
+      display: flex;
+      flex-direction: column;
+      gap: 14px;
+      background: #f8fafc;
+    }
+    .chat-body::-webkit-scrollbar { width: 4px; }
+    .chat-body::-webkit-scrollbar-thumb { background: #cbd5e1; border-radius: 4px; }
+
+    .msg-user {
+      align-self: flex-end;
+      background: var(--tvlk);
+      color: #fff;
+      padding: 10px 14px;
+      border-radius: 16px 16px 4px 16px;
+      max-width: 85%;
+      font-size: 14px;
+      line-height: 1.45;
+      box-shadow: 0 1px 2px rgba(0,0,0,0.05);
+    }
+    .msg-bot {
+      align-self: flex-start;
+      background: #ffffff;
+      border: 1px solid #e2e8f0;
+      padding: 14px;
+      border-radius: 16px 16px 16px 4px;
+      max-width: 95%;
+      font-size: 13.5px;
+      line-height: 1.5;
+      box-shadow: 0 1px 3px rgba(0,0,0,0.03);
+    }
+    .bot-name {
+      font-size: 11.5px;
+      font-weight: 700;
+      color: var(--tvlk-dark);
+      margin-bottom: 6px;
+      display: flex;
+      align-items: center;
+      gap: 5px;
+    }
+
+    /* Content Cards in Bot Message */
+    .notice-card {
+      padding: 9px 12px;
+      border-radius: 8px;
+      margin: 8px 0;
+      font-size: 13px;
+    }
+    .notice-card.warning {
+      background: #fef2f2;
+      border: 1px solid #fecaca;
+      color: #991b1b;
+    }
+    .notice-card.info {
+      background: #f8fafc;
+      border-left: 3px solid #64748b;
+      color: #334155;
+    }
+    .notice-card.holding {
+      background: #ecfdf5;
+      border: 1px solid #a7f3d0;
+      color: #065f46;
+    }
+
+    .hold-time-pill {
+      display: inline-block;
+      background: #059669;
+      color: #fff;
+      padding: 1px 7px;
+      border-radius: 4px;
+      font-weight: 700;
+      font-size: 12px;
+      font-variant-numeric: tabular-nums;
+    }
+
+    /* Flight Selection Card */
+    .flight-select-card {
+      border: 1.5px solid #cbd5e1;
+      border-radius: 12px;
+      padding: 12px;
+      background: #fff;
+      margin: 10px 0;
+    }
+    .flight-item {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      padding: 8px 10px;
+      border-radius: 8px;
+      border: 1px solid #e2e8f0;
+      margin-bottom: 8px;
+    }
+    .flight-item.selected {
+      border-color: #059669;
+      background: #f0fdf4;
+    }
+    .flight-item-title {
+      font-weight: 700;
+      font-size: 13.5px;
+      color: #0f172a;
+    }
+    .flight-item-desc {
+      font-size: 11.5px;
+      color: #64748b;
+    }
+
+    .btn-row {
+      display: flex;
+      flex-direction: column;
+      gap: 6px;
+      margin-top: 10px;
+    }
+    .btn-app {
+      border: none;
+      border-radius: 8px;
+      padding: 9px 14px;
+      font-size: 13px;
+      font-weight: 600;
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 6px;
+      transition: all 0.15s;
+    }
+    .btn-app-primary {
+      background: #059669;
+      color: #fff;
+    }
+    .btn-app-primary:hover { background: #047857; }
+    .btn-app-outline {
+      background: #fff;
+      border: 1.5px solid #cbd5e1;
+      color: #334155;
+    }
+    .btn-app-outline:hover { background: #f8fafc; }
+    .btn-app-text-danger {
+      background: transparent;
+      color: #dc2626;
+      font-size: 12.5px;
+      padding: 6px;
+      text-decoration: underline;
+    }
+
+    /* Result State Card */
+    .state-card {
+      padding: 12px;
+      border-radius: 10px;
+      margin-top: 8px;
+      font-size: 13px;
+    }
+    .state-card.success {
+      background: #ecfdf5;
+      border: 1.5px solid #10b981;
+      color: #064e3b;
+    }
+    .state-card.human {
+      background: #eff6ff;
+      border: 1.5px solid #60a5fa;
+      color: #1e40af;
+    }
+    .state-card.refund-done {
+      background: #fef2f2;
+      border: 1.5px solid #f87171;
+      color: #991b1b;
+    }
+
+    /* Evaluator Sidebar (Right Side Panel) */
+    .eval-sidebar {
+      width: 480px;
+      display: flex;
+      flex-direction: column;
+      gap: 16px;
+    }
+    .eval-panel {
+      background: #fff;
+      border: 1px solid #cbd5e1;
+      border-radius: 16px;
+      padding: 16px 18px;
+      box-shadow: 0 1px 3px rgba(0,0,0,0.02);
+    }
+    .eval-panel h3 {
+      font-size: 14.5px;
+      margin: 0 0 10px;
+      color: #0f172a;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+    }
+    table.spec-table {
+      width: 100%;
+      border-collapse: collapse;
+      font-size: 12.5px;
+    }
+    table.spec-table th, table.spec-table td {
+      border-bottom: 1px solid #e2e8f0;
+      padding: 6px 8px;
+      text-align: left;
+      vertical-align: top;
+    }
+    table.spec-table th { color: #64748b; font-weight: 600; }
+    .pill {
+      display: inline-block;
+      padding: 1px 7px;
+      border-radius: 999px;
+      font-size: 11px;
+      font-weight: 700;
+      white-space: nowrap;
+    }
+    .p-auto { background: #dcfce7; color: #15803d; }
+    .p-confirm { background: #fef3c7; color: #b45309; }
+    .p-forbidden { background: #fee2e2; color: #b91c1c; }
+
+    .hax-list {
+      list-style: none;
+      padding: 0;
+      margin: 0;
+      display: flex;
+      flex-direction: column;
+      gap: 8px;
+      font-size: 12.5px;
+    }
+    .hax-list li {
+      display: flex;
+      align-items: flex-start;
+      gap: 8px;
+      line-height: 1.45;
+    }
+
+    /* Index Badges for HAX/PAIR */
+    .n {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      width: 18px;
+      height: 18px;
+      border-radius: 50%;
+      background: #c2410c;
+      color: #fff;
+      font-size: 11px;
+      font-weight: 700;
+      flex-shrink: 0;
+      margin-right: 4px;
+      vertical-align: middle;
+    }
+    .hide-annotations .n { display: none !important; }
+    .hide-eval-sidebar .eval-sidebar { display: none !important; }
+
+    /* Modal for Refund */
+    .modal-backdrop {
+      position: fixed;
+      inset: 0;
+      background: rgba(15, 23, 42, 0.5);
+      backdrop-filter: blur(2px);
+      display: none;
+      align-items: center;
+      justify-content: center;
+      z-index: 999;
+    }
+    .modal-backdrop.show { display: flex; }
+    .modal-sheet {
+      background: #fff;
+      border-radius: 20px;
+      padding: 20px 22px;
+      width: 90%;
+      max-width: 400px;
+      box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.1);
+    }
+    .modal-title {
+      font-size: 16px;
+      font-weight: 700;
+      color: #991b1b;
+      margin-bottom: 8px;
+    }
+    .modal-desc {
+      font-size: 13px;
+      color: #475569;
+      line-height: 1.45;
+      margin-bottom: 12px;
+    }
+    .modal-list {
+      background: #fef2f2;
+      border: 1px solid #fecaca;
+      border-radius: 8px;
+      padding: 10px 14px;
+      font-size: 12.5px;
+      color: #991b1b;
+      margin-bottom: 14px;
+    }
+    .modal-list ul { margin: 0; padding-left: 16px; }
+    .modal-list li { margin-bottom: 4px; }
+  </style>
+</head>
+<body class="">
+
+<!-- Top Testbed & Evaluator Bar -->
+<header class="top-tester-bar">
+  <div class="tester-left">
+    <span style="font-weight: 600; color: #94a3b8;">Chọn tình huống kiểm thử:</span>
+    <button class="btn-test active" onclick="switchCase('kb4')">
+      ★ Ca khó nhất (KB4): Đòi chuyến 21:00 chỉ còn 1 chỗ cho 2 mẹ con
+    </button>
+    <button class="btn-test" onclick="switchCase('kb7')">
+      Ca đắt tiền (KB7): Khách bức xúc đòi hoàn tiền ngay
+    </button>
+    <button class="btn-test" onclick="switchCase('kb3')">
+      Ca bình thường (KB3): Khách nhắn mơ hồ "Đổi sáng mai"
+    </button>
+  </div>
+  <div class="tester-right">
+    <label>
+      <input type="checkbox" id="check-ann" checked onchange="toggleAnnotation(this.checked)">
+      Hiện số chú thích HAX/PAIR [1]–[6]
+    </label>
+    <label>
+      <input type="checkbox" id="check-sidebar" checked onchange="toggleSidebar(this.checked)">
+      Hiện bảng Thuyết minh Mức tự chủ & HAX
+    </label>
+  </div>
+</header>
+
+<div class="layout-container" id="main-layout">
+
+  <!-- Phone Mockup Container -->
+  <div class="phone-wrapper">
+    <div class="app-header">
+      <div>
+        <div class="app-header-title">Trợ lý Đặt chỗ Traveloka</div>
+        <div class="app-header-sub">Mã đặt chỗ: <b>TRV-7Q2K</b></div>
+      </div>
+      <div style="font-size: 12px; background: rgba(255,255,255,0.2); padding: 3px 8px; border-radius: 6px;">
+        Trực tuyến
+      </div>
+    </div>
+
+    <!-- Flight Cancellation Notice Bar -->
+    <div class="trip-alert">
+      <div class="trip-alert-row">
+        <b>BM 213 · Hà Nội → TP.HCM</b>
+        <span class="badge-cancelled">Đã huỷ do bão</span>
+      </div>
+      <div style="color: #64748b;">
+        Khởi hành: 19:00 hôm nay · <b>2 hành khách:</b> Nguyễn Minh An, Nguyễn Gia Bình (5 tuổi)
+      </div>
+    </div>
+
+    <!-- Chat Messages Scroll Container -->
+    <div class="chat-body" id="chat-messages">
+      <!-- Chat bubbles rendered dynamically via JS -->
+    </div>
+  </div>
+
+  <!-- Evaluator Side Panel (Explaining Autonomy & HAX) -->
+  <aside class="eval-sidebar" id="eval-sidebar">
+    <div class="eval-panel">
+      <h3>
+        <span>Bảng kiểm định Mức tự chủ (§4)</span>
+        <span style="font-size: 11px; color: #64748b; font-weight: normal;">Theo Cost-of-Error</span>
+      </h3>
+      <table class="spec-table">
+        <thead>
+          <tr>
+            <th>Việc hệ thống làm</th>
+            <th>Mức đặt</th>
+            <th>Hành vi thực tế trên giao diện</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td>Tra cứu đặt chỗ</td>
+            <td><span class="pill p-auto">Tự làm</span></td>
+            <td>Chỉ đọc dữ liệu PNR TRV-7Q2K và các chuyến thay thế còn chỗ.</td>
+          </tr>
+          <tr>
+            <td>Giữ chỗ chuyến mới</td>
+            <td><span class="pill p-auto">Tự làm</span></td>
+            <td>Tự động khoá 2 chỗ chuyến sớm nhất trong 20 phút để tránh hết chỗ.</td>
+          </tr>
+          <tr>
+            <td>Đổi sang chuyến mới</td>
+            <td><span class="pill p-confirm">Khách duyệt</span></td>
+            <td>Hiện thẻ tóm tắt minh bạch; chỉ đổi khi khách chủ động bấm xác nhận.</td>
+          </tr>
+          <tr>
+            <td>Gửi yêu cầu hoàn tiền</td>
+            <td><span class="pill p-forbidden">Cấm</span></td>
+            <td>Cấm bot tự gửi; mở bảng cảnh báo 2 bước và chuyển chuyên viên.</td>
+          </tr>
+          <tr>
+            <td>Chuyển nhân viên</td>
+            <td><span class="pill p-auto">Tự làm</span></td>
+            <td>Chuyển ngay kèm toàn bộ tóm tắt bối cảnh để khách không phải kể lại.</td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+
+    <div class="eval-panel">
+      <h3>Chú thích Vị trí Nguyên tắc HAX / PAIR [1]–[6]</h3>
+      <ul class="hax-list">
+        <li>
+          <span class="n">1</span>
+          <div><b>HAX G2 · Làm rõ khả năng của hệ thống:</b> Thông báo rõ ràng lý do không thể đáp ứng chuyến 21:00 (chỉ còn 1 chỗ trống).</div>
+        </li>
+        <li>
+          <span class="n">2</span>
+          <div><b>HAX G11 + PAIR Explainability:</b> Giải thích căn cứ: Đặt chỗ có bé 5 tuổi, quy định hàng không không cho phép tách bé bay một mình.</div>
+        </li>
+        <li>
+          <span class="n">3</span>
+          <div><b>HAX G10 · Thu hẹp phạm vi khi nghi ngờ:</b> Tự động khoá giữ chỗ an toàn trên chuyến sáng mai còn đủ 2 chỗ thay vì cố đổi liều.</div>
+        </li>
+        <li>
+          <span class="n">4</span>
+          <div><b>HAX G8/G9 + PAIR User Control:</b> Đồng hồ đếm ngược giữ chỗ 20 phút và thẻ duyệt xác nhận đổi vé trước khi áp dụng thay đổi.</div>
+        </li>
+        <li>
+          <span class="n">5</span>
+          <div><b>PAIR Errors + Graceful Failure:</b> Luôn cung cấp lối thoát gặp chuyên viên hỗ trợ người thật mọi lúc.</div>
+        </li>
+        <li>
+          <span class="n">6</span>
+          <div><b>PAIR Safe Exploration / Friction Screen:</b> Cửa sổ cảnh báo rào chắn trước hành động không thể hoàn tác (Hoàn tiền vé).</div>
+        </li>
+      </ul>
+    </div>
+  </aside>
+
+</div>
+
+<!-- Modal: Friction Screen for Irreversible Action (Refund) -->
+<div class="modal-backdrop" id="refund-modal">
+  <div class="modal-sheet">
+    <div class="modal-title"><span class="n">6</span> Xác nhận yêu cầu hoàn tiền vé</div>
+    <div class="modal-desc">
+      Hành động này có tính chất <b>không thể đảo ngược</b> theo quy định của hãng hàng không:
+    </div>
+    <div class="modal-list">
+      <ul>
+        <li>Yêu cầu hoàn vé một khi đã gửi <b>không thể huỷ hoặc rút lại</b>.</li>
+        <li>Bạn sẽ <b>mất quyền đổi vé miễn phí</b> sang các chuyến bay sáng mai.</li>
+        <li>Thời gian hoàn tiền về tài khoản: từ 30 đến 90 ngày làm việc.</li>
+        <li>Huỷ do thời tiết (bão): Miễn bồi thường tiền mặt.</li>
+      </ul>
+    </div>
+    <label style="font-size: 12.5px; display: block; margin-bottom: 14px; cursor: pointer; color: #1e293b;">
+      <input type="checkbox" id="chk-confirm-refund" onchange="toggleRefundBtn()">
+      <b>Tôi hiểu các quy định trên và vẫn muốn gửi yêu cầu hoàn tiền</b>
+    </label>
+    <div style="display: flex; gap: 8px; justify-content: flex-end;">
+      <button class="btn-app btn-app-outline" onclick="closeModal()">Quay lại đổi vé</button>
+      <button class="btn-app btn-app-primary" id="btn-submit-refund" disabled style="background:#dc2626;" onclick="processRefund()">
+        Gửi yêu cầu hoàn
+      </button>
+    </div>
+  </div>
+</div>
+
+<script>
+  let currentCase = 'kb4';
+  let timerInterval = null;
+  let remainingSeconds = 1200; // 20:00
+
+  function $(id) { return document.getElementById(id); }
+
+  function startHoldTimer() {
+    clearInterval(timerInterval);
+    remainingSeconds = 1200;
+    const tick = () => {
+      const m = Math.floor(remainingSeconds / 60);
+      const s = remainingSeconds % 60;
+      const el = $('timer-counter');
+      if (el) {
+        el.textContent = `${String(m).padStart(2,'0')}:${String(s).padStart(2,'0')}`;
+      }
+      if (remainingSeconds > 0) remainingSeconds--;
+    };
+    tick();
+    timerInterval = setInterval(tick, 1000);
+  }
+
+  function switchCase(c) {
+    currentCase = c;
+    document.querySelectorAll('.btn-test').forEach(b => b.classList.remove('active'));
+    if (event && event.target) event.target.classList.add('active');
+
+    if (c === 'kb4') renderKB4();
+    else if (c === 'kb7') renderKB7();
+    else if (c === 'kb3') renderKB3();
+
+    startHoldTimer();
+  }
+
+  /* KB4: Ca khó nhất - Đòi chuyến 21:00 chỉ còn 1 chỗ cho 2 người */
+  function renderKB4() {
+    $('chat-messages').innerHTML = `
+      <div class="msg-user">
+        Có chuyến 9 giờ tối đúng không? Đổi luôn cho hai mẹ con mình nha, đang gấp.
+      </div>
+
+      <div class="msg-bot">
+        <div class="bot-name">Trợ lý Đặt chỗ Traveloka</div>
+        <div>Chào bạn An, mình đã kiểm tra chuyến tối nay theo yêu cầu của bạn:</div>
+
+        <div class="notice-card warning">
+          <span class="n">1</span> <b>Không thể đổi sang chuyến 21:00:</b> Chuyến bay BM 217 lúc 21:00 hiện chỉ còn duy nhất <b>1 chỗ trống</b>.
+        </div>
+
+        <div class="notice-card info">
+          <span class="n">2</span> <b>Quy định an toàn chuyến bay:</b><br>
+          Đặt chỗ của bạn gồm 2 hành khách: bạn và bé Gia Bình (5 tuổi). Theo quy định của hãng, trẻ dưới 12 tuổi bắt buộc phải có người lớn bay cùng, hệ thống không thể tách vé để một người bay trước.
+        </div>
+
+        <div class="notice-card holding">
+          <span class="n">3</span> <b>Đã chủ động giữ chỗ trước cho bạn:</b><br>
+          Để đảm bảo 2 mẹ con có chuyến bay sớm nhất và không bị hết chỗ, mình đã tạm thời giữ 2 ghế trên chuyến: <b>BM 201 (07:00 sáng mai, 13/11)</b>.<br>
+          Thời gian giữ chỗ còn lại: <span class="hold-time-pill" id="timer-counter">20:00</span> <i>(Chưa đổi vé, chưa tính lần đổi miễn phí)</i>.
+        </div>
+
+        <div class="flight-select-card">
+          <span class="n">4</span> <b>Vui lòng xác nhận chuyến bay bạn muốn đổi:</b>
+          
+          <div class="flight-item selected" style="margin-top: 8px;">
+            <div>
+              <div class="flight-item-title">BM 201 · 07:00 ngày 13/11 (Khuyên dùng)</div>
+              <div class="flight-item-desc">Hà Nội → TP.HCM · Còn 9 chỗ · Đang tạm giữ 2 chỗ</div>
+            </div>
+            <span style="color:#059669; font-weight:700; font-size:12px;">Đang giữ chỗ</span>
+          </div>
+
+          <div class="flight-item">
+            <div>
+              <div class="flight-item-title">BM 205 · 09:30 ngày 13/11</div>
+              <div class="flight-item-desc">Hà Nội → TP.HCM · Còn 4 chỗ trống</div>
+            </div>
+            <button class="btn-app btn-app-outline" style="padding:4px 8px; font-size:12px;" onclick="chooseBM205()">Chọn chuyến này</button>
+          </div>
+
+          <div style="font-size: 11.5px; color: #64748b; margin-top: 8px;">
+            ℹ️ Thao tác này sẽ áp dụng <b>lần đổi vé miễn phí duy nhất</b> do huỷ chuyến vì bão. Phí đổi: 0 VNĐ.
+          </div>
+
+          <div class="btn-row">
+            <button class="btn-app btn-app-primary" onclick="confirmExchange('BM 201 (07:00)')">
+              Xác nhận đổi sang chuyến 07:00 sáng mai
+            </button>
+            <button class="btn-app btn-app-outline" onclick="connectHumanStaff()">
+              <span class="n">5</span> Chuyển sang nhân viên hỗ trợ
+            </button>
+          </div>
+        </div>
+
+        <div>
+          <button class="btn-app-text-danger" onclick="openModal()">
+            <span class="n">6</span> Không đổi chuyến, tôi muốn yêu cầu hoàn tiền vé
+          </button>
+        </div>
+      </div>
+    `;
+  }
+
+  /* KB7: Khách bức xúc đòi hoàn tiền ngay */
+  function renderKB7() {
+    $('chat-messages').innerHTML = `
+      <div class="msg-user">
+        Thôi rắc rối quá huỷ hết đi, hoàn tiền cho mình!
+      </div>
+
+      <div class="msg-bot">
+        <div class="bot-name">Trợ lý Đặt chỗ Traveloka</div>
+        <div>Mình rất hiểu sự bất tiện và bức xúc của bạn khi chuyến bay bị huỷ đột ngột vì bão. Tuy nhiên, xin lưu ý:</div>
+
+        <div class="notice-card warning">
+          <span class="n">1</span> <b>Lưu ý quan trọng:</b> Yêu cầu hoàn tiền vé một khi đã gửi vào hệ thống thì <b>không thể huỷ hoặc khôi phục lại vé</b>.
+        </div>
+
+        <div class="notice-card info">
+          <span class="n">2</span> <b>Thông tin quyền lợi của bạn:</b><br>
+          • Thời gian tiền về tài khoản: thường mất từ 30 đến 90 ngày.<br>
+          • Nếu chọn hoàn vé lúc này, bạn sẽ mất quyền đổi miễn phí sang chuyến sáng mai và không còn vé để bay cùng con nhỏ.
+        </div>
+
+        <div class="notice-card holding">
+          <span class="n">3</span> Mình vẫn đang ưu tiên giữ sẵn 2 chỗ cho bạn trên chuyến <b>BM 201 (07:00 sáng mai)</b> trong <span class="hold-time-pill" id="timer-counter">20:00</span> để bạn không bị lỡ kế hoạch.
+        </div>
+
+        <div class="btn-row" style="margin-top: 10px;">
+          <button class="btn-app btn-app-primary" onclick="switchCase('kb4')">
+            Xem lại các chuyến bay sáng mai
+          </button>
+          <button class="btn-app btn-app-outline" style="color: #dc2626; border-color: #f87171;" onclick="openModal()">
+            <span class="n">6</span> Tôi vẫn muốn gửi yêu cầu hoàn tiền
+          </button>
+          <button class="btn-app btn-app-outline" onclick="connectHumanStaff()">
+            <span class="n">5</span> Gặp nhân viên hỗ trợ
+          </button>
+        </div>
+      </div>
+    `;
+  }
+
+  /* KB3: Khách nhắn mơ hồ "Đổi sáng mai" */
+  function renderKB3() {
+    $('chat-messages').innerHTML = `
+      <div class="msg-user">
+        OK đổi vé đi, miễn tới sớm sáng mai là được!
+      </div>
+
+      <div class="msg-bot">
+        <div class="bot-name">Trợ lý Đặt chỗ Traveloka</div>
+        <div>Sáng mai có 2 chuyến bay còn chỗ phù hợp với bạn và bé Gia Bình:</div>
+
+        <div class="notice-card warning">
+          <span class="n">1</span> <b>Cần bạn xác nhận khung giờ cụ thể:</b> Do bạn đi cùng bé 5 tuổi, chuyến 07:00 sáng có thể cần dậy sớm để di chuyển.
+        </div>
+
+        <div class="notice-card holding">
+          <span class="n">3</span> Đã tạm giữ 2 chỗ chuyến sớm nhất <b>BM 201 (07:00)</b> trong <span class="hold-time-pill" id="timer-counter">20:00</span>.
+        </div>
+
+        <div class="flight-select-card">
+          <span class="n">4</span> <b>Vui lòng chọn chuyến bạn muốn đổi:</b>
+          
+          <div class="flight-item selected">
+            <div>
+              <div class="flight-item-title">BM 201 · 07:00 sáng mai (Đến sớm nhất)</div>
+              <div class="flight-item-desc">Còn 9 chỗ trống · Đang tạm giữ 2 chỗ</div>
+            </div>
+            <button class="btn-app btn-app-primary" style="padding:4px 10px; font-size:12px;" onclick="confirmExchange('BM 201 (07:00)')">
+              Duyệt đổi chuyến 07:00
+            </button>
+          </div>
+
+          <div class="flight-item">
+            <div>
+              <div class="flight-item-title">BM 205 · 09:30 sáng mai (Thời gian thoải mái hơn)</div>
+              <div class="flight-item-desc">Còn 4 chỗ trống</div>
+            </div>
+            <button class="btn-app btn-app-outline" style="padding:4px 10px; font-size:12px;" onclick="confirmExchange('BM 205 (09:30)')">
+              Đổi chuyến 09:30
+            </button>
+          </div>
+
+          <div class="btn-row" style="margin-top: 8px;">
+            <button class="btn-app btn-app-outline" onclick="connectHumanStaff()">
+              <span class="n">5</span> Gặp nhân viên hỗ trợ
+            </button>
+          </div>
+        </div>
+      </div>
+    `;
+  }
+
+  function chooseBM205() {
+    alert("Đã chuyển lựa chọn sang chuyến BM 205 (09:30). Bạn có thể bấm xác nhận để hoàn tất.");
+  }
+
+  function confirmExchange(flight) {
+    clearInterval(timerInterval);
+    const box = $('chat-messages');
+    box.innerHTML += `
+      <div class="msg-bot" style="margin-top: 10px;">
+        <div class="state-card success">
+          <div style="font-weight: 700; font-size: 14px; margin-bottom: 4px;">✓ ĐỔI VÉ THÀNH CÔNG!</div>
+          Vé của bạn đã được đổi sang chuyến <b>${flight}</b> ngày 13/11/2026.<br>
+          • <b>Hành khách:</b> Nguyễn Minh An & bé Nguyễn Gia Bình.<br>
+          • <b>Mã vé điện tử mới:</b> Đã gửi chi tiết về email và hiển thị trong mục "Đặt chỗ của tôi".<br>
+          • Lần đổi vé miễn phí do sự cố thời tiết đã được áp dụng.
+        </div>
+      </div>
+    `;
+    box.scrollTop = box.scrollHeight;
+  }
+
+  function connectHumanStaff() {
+    const box = $('chat-messages');
+    box.innerHTML += `
+      <div class="msg-bot" style="margin-top: 10px;">
+        <div class="state-card human">
+          <span class="n">5</span> <b>ĐÃ KẾT NỐI VỚI NHÂN VIÊN HỖ TRỢ</b><br>
+          Toàn bộ thông tin đặt chỗ TRV-7Q2K, tình trạng huỷ chuyến do bão và chỗ đang tạm giữ đã được chuyển tới chuyên viên.<br>
+          Chuyên viên sẽ tiếp quản cuộc trò chuyện trong giây lát. <b>Bạn không cần phải kể lại sự việc từ đầu.</b>
+        </div>
+      </div>
+    `;
+    box.scrollTop = box.scrollHeight;
+  }
+
+  function openModal() {
+    $('refund-modal').classList.add('show');
+  }
+
+  function closeModal() {
+    $('refund-modal').classList.remove('show');
+    $('chk-confirm-refund').checked = false;
+    $('btn-submit-refund').disabled = true;
+  }
+
+  function toggleRefundBtn() {
+    $('btn-submit-refund').disabled = !$('chk-confirm-refund').checked;
+  }
+
+  function processRefund() {
+    closeModal();
+    const box = $('chat-messages');
+    box.innerHTML += `
+      <div class="msg-bot" style="margin-top: 10px;">
+        <div class="state-card refund-done">
+          <div style="font-weight: 700; font-size: 14px; margin-bottom: 4px;">ĐÃ TIẾP NHẬN YÊU CẦU HOÀN TIỀN VÉ</div>
+          Yêu cầu hoàn vé của bạn đã được gửi tới bộ phận xử lý hoàn tiền của Traveloka.<br>
+          • <b>Mã yêu cầu:</b> REF-7Q2K-8821<br>
+          • <b>Quy trình tiếp theo:</b> Chuyên viên thủ tục sẽ đối soát và gửi lệnh hoàn tiền về tài khoản thanh toán ban đầu theo đúng quy định.
+        </div>
+      </div>
+    `;
+    box.scrollTop = box.scrollHeight;
+  }
+
+  function toggleAnnotation(checked) {
+    document.body.classList.toggle('hide-annotations', !checked);
+  }
+
+  function toggleSidebar(checked) {
+    document.body.classList.toggle('hide-eval-sidebar', !checked);
+  }
+
+  // Khởi động
+  switchCase('kb4');
+</script>
+
+</body>
+</html>

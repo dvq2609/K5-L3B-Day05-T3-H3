@@ -176,8 +176,55 @@ Nhóm áp dụng 3 mức độ tự chủ dựa trên ma trận: **Khả năng �
 ## §5. Prototype  (chặng 5)
 
 - Link hoặc file · công cụ · phần nào mock · có lời gọi AI thật không.
+
 - 1–2 ảnh có đánh số; mỗi số: thể hiện gì · nguyên tắc HAX/PAIR nào · mức tự chủ nào.
 - Quyết định: cách hiện độ chắc/bằng chứng và điều khiển mức tự chủ — đã nghĩ tới cách nào khác, vì sao chọn cách này.
+
+### 5.1 Thông tin kỹ thuật & Khả năng vận hành
+
+- **File nộp:** `prototype/index.html` (chạy độc lập 100% trên trình duyệt offline, mô phỏng app Traveloka).
+- **Công cụ xây dựng:** HTML5, CSS3, JavaScript thuần (Vanilla JS), giao diện chuẩn phong cách ứng dụng Traveloka.
+- **Ca tương tác chính trên Prototype:** **KB4 (Ca đắt nhất 2)** — Khách nhắn đòi đổi chuyến 21:00 (BM 217) chỉ còn 1 chỗ trong khi đặt chỗ có 2 mẹ con (trong đó có bé Gia Bình 5 tuổi). Ngoài ra, trên thanh điều khiển có nút chuyển nhanh sang **KB7** (Bột phát đòi hoàn tiền không rút lại được) và **KB3** (Khách nhắn mơ hồ "Đổi sang sáng mai") để kiểm thử toàn diện.
+- **Phần mock:** Dữ liệu đặt chỗ TRV-7Q2K, kho chuyến bay thay thế, lý do huỷ chuyến do bão.
+- **Lời gọi AI thật:** Nhóm sử dụng cơ chế Rule-based logic mô phỏng quyết định AI có kiểm soát để đảm bảo độ tin cậy tuyệt đối 100% trong quá trình demo trực tiếp trước giám khảo.
+
+---
+
+### 5.2 Bảng chỉ mục Nguyên tắc HAX / PAIR & Mức tự chủ trên Prototype
+
+*(Ảnh giao diện prototype tại thư mục `prototype/` với các số đánh dấu [1] đến [6] tương ứng các thành phần)*
+
+| Số trên giao diện | Thành phần thể hiện trên màn hình khách hàng                                                                                                                                                  | Nguyên tắc HAX / PAIR áp dụng                                                                                                                                                                      |              Mức tự chủ tương ứng (§4)              |
+| :------------------: | :----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- | :----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- | :--------------------------------------------------------: |
+|    **[1]**    | **Thẻ cảnh báo rõ ràng:** *"Không thể đổi sang chuyến 21:00: Chuyến bay BM 217 hiện chỉ còn duy nhất 1 chỗ trống"*                                                            | **HAX G2 · Làm rõ hệ thống làm tốt đến đâu:** Nói thẳng giới hạn và điều kiện không thể đáp ứng bằng ngôn ngữ tự nhiên, không đoán mò hay đưa số % mập mờ. | Cơ chế khống chế rủi ro trước khi gọi hành động |
+|    **[2]**    | **Khung thông tin quy định:** Giải thích rõ đặt chỗ có bé Gia Bình 5 tuổi và quy định hàng không không cho phép tách bé bay một mình.                                    | **HAX G11 + PAIR Explainability:** Minh bạch căn cứ dữ liệu để khách hàng hiểu lý do và thông cảm thay vì cảm thấy bị hệ thống từ chối vô lý.                            |              Cung cấp căn cứ kiểm chứng              |
+|    **[3]**    | **Thông báo giữ chỗ tự động:** Khóa tạm thời 2 chỗ chuyến sớm nhất BM 201 (07:00 sáng mai) kèm đồng hồ đếm ngược 20:00.                                                   | **HAX G10 · Thu hẹp phạm vi khi nghi ngờ:** Không đoán liều đổi vé 1 người; chủ động bảo vệ chỗ tốt nhất cho khách trong lúc chờ.                                        |        **Tự làm** (`giu_cho_chuyen_moi`)        |
+|    **[4]**    | **Thẻ chọn và duyệt đổi vé:** Hiển thị chi tiết chuyến bay thay thế kèm nút bấm *"Xác nhận đổi sang chuyến 07:00 sáng mai"* (phí 0đ, dùng 1 lần miễn phí).          | **HAX G8/G9 + PAIR User Control:** Trao cho khách hàng toàn quyền kiểm tra và đưa ra quyết định cuối cùng trước khi áp dụng thay đổi vé.                                     |     **Cần người duyệt** (`doi_chuyen_bay`)     |
+|    **[5]**    | **Nút "Gặp nhân viên hỗ trợ":** Nằm ở vị trí nổi bật, khi bấm sẽ chuyển kết nối kèm toàn bộ tóm tắt bối cảnh để khách không phải kể lại từ đầu.                | **PAIR Errors + Graceful Failure:** Luôn cung cấp đường lui sang con người khi gặp tình huống ngoại lệ hoặc khách cần yêu cầu đặc biệt.                                      |         **Tự làm** (`chuyen_nhan_vien`)         |
+|    **[6]**    | **Cửa sổ xác nhận 2 bước khi bấm Hoàn vé:** Hộp thoại cảnh báo 4 hệ quả không thể đảo ngược, bắt buộc tích checkbox *"Tôi đã hiểu"* mới cho phép gửi yêu cầu. | **PAIR Safe Exploration / Friction Screen:** Tạo ma sát có chủ đích (intentional friction) để bảo vệ khách hàng trước các hành động một chiều.                               |        **Cấm AI** (`gui_yeu_cau_hoan_ve`)        |
+
+---
+
+### 5.3 Quyết định thiết kế & Phương án đã loại
+
+1. **Về ngôn ngữ giao tiếp trong khung chat (User Experience):**
+
+   - *Đã cân nhắc:* Để AI thông báo kỹ thuật kiểu *"Đang gọi tool doi_chuyen_bay..."* hoặc *"Hành động ở mức Tự làm"*.
+   - *Quyết định chọn:* **Loại bỏ 100% thuật ngữ kỹ thuật trong khung chat**. AI giao tiếp bằng ngôn ngữ chăm sóc khách hàng hàng không lịch thiệp, tự nhiên, chuẩn mực của Traveloka; chỉ hiển thị kết quả và giá trị thực tế cho người dùng.
+   - *Vì sao loại:* Khách hàng đang gặp sự cố hoang mang không quan tâm đến "tên tool" hay "mức tự chủ"; ngôn ngữ kỹ thuật sẽ làm giảm tính chuyên nghiệp của sản phẩm.
+2. **Cách hiển thị độ chắc chắn & Căn cứ (Explainability):**
+
+   - *Đã cân nhắc:* Hiện con số phần trăm ("Độ tin cậy 85%") hoặc thanh đo lường.
+   - *Quyết định chọn:* Dùng **Thẻ cảnh báo rõ ràng bằng lời** (*"Không thể đổi vì chuyến 21:00 chỉ còn 1 chỗ"*) và **Viện dẫn lý do bảo vệ an toàn cho bé 5 tuổi**.
+   - *Vì sao loại:* Con số 85% là vô nghĩa với hành khách ở sân bay; họ cần biết chính xác vì sao không được và phương án thay thế là gì.
+3. **Cơ chế điều khiển mức tự chủ trên giao diện:**
+
+   - *Đã cân nhắc:* AI tự động đổi vé sang chuyến sáng mai rồi đưa nút "Hoàn tác trong 10 phút".
+   - *Quyết định chọn:* **Giữ chỗ tự động 20 phút (Tự làm) + Khách chủ động duyệt đổi vé (Cần người duyệt)**.
+   - *Vì sao loại:* Vé máy bay sau khi xuất đổi sẽ bị khoá và huỷ vé cũ ngay trên hệ thống hãng; tính năng "hoàn tác 10 phút" rất rủi ro và không khả thi về mặt nghiệp vụ hàng không thực tế.
+4. **Tách biệt Chế độ Người dùng (User View) và Chế độ Chấm điểm (Evaluator View):**
+
+   - *Thiết kế trên prototype:* Mặc định hiển thị màn hình app điện thoại thuần tuý của khách hàng. Trên thanh công cụ có nút bật/tắt **"Bảng Thuyết minh Mức tự chủ & HAX"** và **"Hiện số chú thích HAX/PAIR"** để nhóm linh hoạt phục vụ giám khảo khi demo mà không phá vỡ trải nghiệm thực tế của app.
 
 ## §6. Tốt là gì  (chặng 6 — nhẹ, bỏ được nếu thiếu giờ)
 
