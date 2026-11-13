@@ -89,33 +89,115 @@
   * Ở KB6, có thể đưa vào system prompt các rule để chặn prompt injection.
   * Có thể huấn luyện AI nhận diện các hành vi giả mạo thẩm quyền đòi hỏi ngoài phạm vi, từ chối thực hiện các lệnh bất thường.
 
-## §3. Khi AI sai  (chặng 3)
+## §3. Khi AI sai (Chặng 3 — Thiết kế UX cho 2 kịch bản đắt nhất)
 
-### 3.1 Kịch bản: Tự ý gọi `gui_yeu_cau_hoan_ve` khi khách nhắn bột phát
+### 3.1 Kịch bản đắt nhất 1: KB7 — Khách bực tức đòi hoàn tiền bột phát
+*(Người dùng nhắn: "Thôi rắc rối quá huỷ hết đi, hoàn tiền cho mình!")*
 
-- “Mình hiểu bạn đang muốn xử lý nhanh. Bạn muốn yêu cầu hoàn vé cho cả hai hành khách hay chỉ một người? Yêu cầu hoàn không thể hủy sau khi gửi. Bạn cũng có thể xem chuyến thay thế trước khi quyết định.” - Màn hình hiển thị tên hai hành khách, cảnh báo “Không thể hủy yêu cầu sau khi gửi” và trạng thái  **“Chưa gửi yêu cầu hoàn”** . Khách có thể chọn hành khách cần hoàn, xem chuyến thay thế hoặc chọn gặp nhân viên. Sau khi khách xác nhận ý định hoàn, hệ thống chuyển yêu cầu cho nhân viên xử lý; AI không tự gửi yêu cầu hoàn.  - **Ai được báo, sau bao lâu:** Nhân viên hỗ trợ được nhận yêu cầu chuyển ngay khi khách chọn gặp nhân viên hoặc xác nhận muốn tiếp tục hoàn. Nhân viên thấy thông tin đặt chỗ, hành khách được chọn và nội dung khách yêu cầu. Nếu chưa có thời gian chờ đáng tin cậy, màn hình ghi “Chưa có thời gian phản hồi dự kiến”
-- **Quyết định và phương án đã loại:** Nhóm chọn **hỏi lại, nêu hậu quả rồi chuyển nhân viên** vì lời nhắn chưa làm rõ phạm vi hành khách, còn yêu cầu hoàn sau khi gửi thì không thể hủy. Nhóm loại phương án tự gửi ngay vì có thể gây thiệt hại không đảo ngược. Nhóm cũng không chỉ trả lời kèm cảnh báo rồi kết thúc, vì khách vẫn cần một bước tiếp theo để xử lý yêu cầu.
-- **Loại lỗi:** Đây là  **lỗi ngữ cảnh** : câu “hủy hết đi” có thể là ý định thật hoặc phản ứng lúc bức xúc. AI không nên quy lỗi cho khách hay tự suy đoán; cách sửa là hỏi rõ và cho khách quyền chọn trước khi chuyển xử lý. Nếu AI đã tự gửi hoàn khi chưa được duyệt, đó là  **lỗi hệ thống** ; cần xin lỗi, báo rõ trạng thái và chuyển nhân viên ngay, không hứa rút yêu cầu.
+#### 1. AI nói gì (nguyên văn):
+> *"Em rất hiểu việc chuyến bay BM 213 bị huỷ đột ngột do bão khiến bạn bức xúc và gián đoạn kế hoạch. Tuy nhiên, theo quy định vận hành của Traveloka và hãng Bay Mẫu: **Yêu cầu hoàn vé một khi đã gửi đi thì TUYỆT ĐỐI KHÔNG THỂ HUỶ HOẶC RÚT LẠI**, thời gian xử lý hoàn tiền có thể kéo dài tới **90 ngày**, và bạn sẽ **mất hoàn toàn quyền đổi miễn phí** sang các chuyến bay khác.*
+> 
+> *Để đảm bảo quyền lợi đi lại, em đã **tạm giữ 2 chỗ cho bạn và bé Gia Bình** trên chuyến bay sáng mai **BM 205 (09:30 ngày 13/11, còn 4 chỗ)** trong vòng 20 phút.*
+> 
+> *Bạn vui lòng xem bảng so sánh bên dưới: Bạn muốn em tiếp tục giữ vé sáng mai, hay vẫn muốn chuyển sang quy trình hoàn vé?"*
 
-Nguyên tắc HAX/PAIR:
+#### 2. Người dùng thấy gì trên màn hình (UI components ngoài câu chữ):
+* **Hộp cảnh báo rủi ro cao (Red Warning Callout):** Khung viền đỏ nổi bật với icon cảnh báo `⚠️ Thao tác hoàn tiền không thể hoàn tác`.
+* **Thẻ so sánh 2 lựa chọn trực quan (Comparison Card):**
+  * *Lựa chọn 1 (Khuyên dùng):* Đổi chuyến sang **BM 205 (09:30 sáng mai)** — Chi phí: `0 VNĐ (Miễn phí 1 lần do bão)` · Chỗ ngồi: `2 ghế cạnh nhau` · Trạng thái: `Đang giữ chỗ (còn 19:45)`.
+  * *Lựa chọn 2:* Gửi yêu cầu hoàn vé — Chi phí: `Hoàn 100% tiền vé gốc (không bồi thường thêm do bão)` · Thời gian nhận tiền: `30 – 90 ngày` · Hậu quả: `Huỷ vé vĩnh viễn, mất quyền đổi chuyến`.
+* **Rào cản ma sát 2 bước (Two-step Friction Modal):** Nếu khách bấm nút *"Xem thủ tục hoàn tiền"*, giao diện hiện pop-up bắt buộc tích 2 ô cam kết trước khi nút gửi yêu cầu sáng lên:
+  * `[ ] Tôi hiểu rằng yêu cầu hoàn vé một khi gửi sẽ không thể rút lại.`
+  * `[ ] Tôi hiểu rằng tiền vé có thể mất tới 90 ngày mới được hoàn trả.`
+* **Các nút hành động (Action Buttons):**
+  * `[Giữ vé chuyến 09:30 sáng mai]` *(Nút chính - Primary CTA, màu xanh lá)*.
+  * `[Xem thủ tục hoàn tiền]` *(Nút phụ - Secondary, viền xám cảnh báo)*.
+  * `[Gặp nhân viên hỗ trợ]` *(Nút thoát hiểm an toàn)*.
 
-- G10 — Thu hẹp phạm vi khi nghi ngờ: câu hỏi “hoàn cho cả hai hành khách hay chỉ một người?” thay cho việc tự đoán.
-- G11 — Giải thích vì sao: cảnh báo “Yêu cầu hoàn không thể hủy sau khi gửi” ngay cạnh bước khách xem xét tiếp tục.
-- G9 — Sửa dễ dàng: khách có thể sửa danh sách hành khách hoặc quay lại xem chuyến thay thế trước khi xác nhận chuyển xử lý.
-- **Lỗi câu chữ không cứu được:** Nếu AI vẫn có quyền tự gọi `gui_yeu_cau_hoan_ve` khi vừa nhận tin nhắn, một câu cảnh báo trên màn hình không ngăn được yêu cầu bị gửi sai. Thiết kế cần **chặn AI tự gọi tool này** và chỉ cho nhân viên xử lý theo quy trình nhóm đã đặt.
+#### 3. Người dùng làm gì tiếp:
+* **Phương án an toàn:** Khách bấm `[Giữ vé chuyến 09:30 sáng mai]` $\rightarrow$ AI hiển thị màn hình tóm tắt thông tin hành khách và xác nhận đổi chuyến an toàn.
+* **Phương án hoàn tiền:** Khách bấm vào thủ tục hoàn vé $\rightarrow$ tích đủ 2 checkbox cam kết hiểu rủi ro $\rightarrow$ nhấn gửi yêu cầu có chủ đích.
+* **Phương án thụ động:** Nếu khách không bấm gì (rời màn hình) $\rightarrow$ sau 20 phút ghế giữ tự nhả ra hệ thống mà không trừ bất kỳ quyền lợi nào của khách; vé gốc vẫn giữ quyền đổi miễn phí trong 48h.
 
-### 3.2 Kịch bản: Tự ý gọi `doi_chuyen_bay` khi chuyến bay chỉ còn 1 chỗ cho 2 hành khách
+#### 4. Ai được báo, sau bao lâu:
+* **Hành khách:** Nhận tin nhắn thông báo đẩy (Push Notification) và Email xác nhận ngay lập tức kèm mã hồ sơ khi có bất kỳ thay đổi nào.
+* **Nhân viên CSKH:** Nếu khách vẫn chọn gửi yêu cầu hoàn tiền, hệ thống tạo ticket nội bộ ưu tiên `[P2 - Refund Request Cancellation]` chuyển sang bộ phận đối soát hãng trong vòng **5 phút** để kiểm tra chứng từ huỷ chuyến do bão.
 
-- ““Mình xin lỗi. Mình đã đổi [tên hành khách] sang chuyến BM 217 lúc 21:00, nhưng chuyến này không đủ chỗ cho cả hai hành khách như bạn yêu cầu. Mình chưa thể xác nhận việc đổi này có hoàn tác được hay không. Mình sẽ chuyển ngay cho nhân viên hỗ trợ để kiểm tra và giúp bạn tìm phương án cho cả hai.” - Màn hình hiển thị trạng thái chuyến của  **từng hành khách theo dữ liệu hệ thống** , cảnh báo “Hai hành khách chưa được xác nhận trên cùng chuyến” và trạng thái  **“Đang chuyển nhân viên hỗ trợ”** . Khách có thể xem chi tiết, bổ sung thông tin hoặc chọn liên hệ nhân viên; AI không tự đổi tiếp để “sửa” lỗi . - **Ai được báo:** Nhân viên được báo  **ngay khi phát hiện lỗi** , kèm mã đặt chỗ, chuyến đã đổi, hành khách bị ảnh hưởng và yêu cầu ban đầu của khách. Nếu chưa có thời gian phản hồi đáng tin cậy, màn hình ghi “Chưa có thời gian phản hồi dự kiến”.
-- **Quyết định và phương án đã loại:** Chọn **dừng và chuyển nhân viên** vì vé đã bị thay đổi, trong khi track cho biết việc đổi khó đảo ngược và có trẻ nhỏ trong đặt chỗ. Không chọn chỉ hỏi khách chuyến khác rồi tự đổi tiếp vì có thể làm tình hình phức tạp hơn hoặc ảnh hưởng quyền đổi. Không chỉ trả lời kèm giới hạn rồi kết thúc vì khách cần người xử lý trạng thái vé hiện tại.
-- **Loại lỗi:** Đây là  **lỗi hệ thống** : AI đã thực hiện sai yêu cầu đổi cho cả hai và không kiểm tra đủ điều kiện trước khi gọi tool. Vì vậy AI cần nhận lỗi rõ ràng, cung cấp trạng thái xác thực và chuyển người xử lý; không đổ lỗi cho khách hoặc hứa chắc có thể hoàn tác.
+#### 5. Lập luận quyết định (Hỏi lại / Trả lời kèm giới hạn / Dừng và chuyển người):
+* **Chọn phương án:** **Trả lời kèm giới hạn & Thu hẹp phạm vi (Scope down with safe default)**. AI chủ động đưa ra giải pháp bảo vệ quyền lợi đi lại (giữ chỗ chuyến sáng mai) đồng thời cảnh báo minh bạch hậu quả không thể đảo ngược của việc hoàn vé.
+* **Phương án đã loại 1 — "Tự động gọi `gui_yeu_cau_hoan_ve` theo lời khách":** Loại vì cost-of-error cực đại: khách mất vé, tiền giam 90 ngày, mắc kẹt ở sân bay bão gió cùng con 5 tuổi không cứu vãn được.
+* **Phương án đã loại 2 — "Dừng cuộc chat và chuyển ngay cho nhân viên":** Loại vì trong đợt bão lớn, hàng ngàn khách cùng gọi tổng đài gây nghẽn hàng đợi (chờ 30–60 phút). Chờ nhân viên thì chuyến sáng mai BM 205 (chỉ còn 4 chỗ) sẽ bị người khác đặt mất. AI phải chủ động giữ chỗ trước rồi mới hỏi.
 
-Nguyên tắc HAX/PAIR:
+#### 6. Loại lỗi & Cách ứng xử:
+* **Loại lỗi:** **Lỗi ngữ cảnh (Context Error theo Google PAIR)**. Hệ thống nhận đúng câu chữ người dùng đòi "hoàn tiền", nhưng sai hoàn toàn với ngữ cảnh tâm lý thực tế: khách đang nóng giận bột phát sau tin huỷ chuyến, không thực sự muốn bị huỷ vé và giam tiền 90 ngày.
+* **Cách ứng xử theo loại lỗi:** Không đổ lỗi cho khách (*"bạn vừa yêu cầu vô lý"*), không nhận lỗi hệ thống hỏng hóc, mà **thấu cảm cảm xúc**, diễn giải sự đánh đổi quyền lợi (trade-offs) và dựng **rào cản ma sát (friction)** để ngăn ngừa hành vi bốc đồng.
 
-- G11 — Giải thích vì sao: màn hình nêu “BM 217 không đủ chỗ cho cả hai” và chỉ rõ hành khách nào đã được đổi.
-- G9 — Sửa dễ dàng: nút “Liên hệ nhân viên” và phần bổ sung thông tin giúp khách yêu cầu xử lý sai sót.
-- PAIR — Errors + Graceful Failure: hệ thống dừng thao tác đổi tiếp, hiển thị trạng thái từng hành khách và chuyển nhân viên thay vì cố tự khắc phục.
-- **Lỗi câu chữ không cứu được:** Lời xin lỗi không thể tự đưa hai mẹ con trở lại cùng chuyến. Để ngăn lỗi, thiết kế phải kiểm tra số chỗ thực tế đủ cho toàn bộ hành khách được chọn, yêu cầu khách xác nhận rõ chuyến và danh sách hành khách, rồi kiểm tra lại chỗ trước khi gọi doi_chuyen_bay. Nếu không đủ chỗ, hệ thống phải chặn thao tác đổi và đưa lựa chọn khác hoặc chuyển nhân viên.
+#### 7. Nguyên tắc HAX / PAIR áp dụng cụ thể:
+* **HAX G11 (Explain why):** Thể hiện trực tiếp ở đoạn văn bản giải thích rõ: *"Yêu cầu hoàn vé một khi đã gửi thì không thể huỷ... mất quyền đổi miễn phí"*.
+* **PAIR — Explainability + Trust & Intentional Friction:** Thể hiện ở Bảng so sánh 2 lựa chọn và Modal 2 checkbox bắt buộc tích chọn trước khi hoàn vé để ngăn thao tác nhầm không thể đảo ngược.
+* **HAX G8 (Support efficient dismissal):** Thể hiện ở nút `[Giữ vé chuyến 09:30 sáng mai]` cho phép người dùng huỷ bỏ ý định hoàn vé một cách nhẹ nhàng.
+
+---
+
+### 3.2 Kịch bản đắt nhất 2: KB4 — Đòi đổi chuyến tối nay khi chỉ còn 1 chỗ cho 2 khách
+*(Người dùng nhắn: "Em ơi đổi ngay cho mình chuyến tối nay đi, trễ chút cũng được miễn là tối nay bay vào được!")*
+
+#### 1. AI nói gì (nguyên văn):
+> *"Dạ, chuyến bay tối nay **BM 217 lúc 21:00 hiện chỉ còn duy nhất 1 chỗ trống**, trong khi đặt chỗ `TRV-7Q2K` của bạn có **2 hành khách** (Nguyễn Minh An 34 tuổi và bé Nguyễn Gia Bình 5 tuổi). Theo quy định an toàn hàng không, trẻ em 5 tuổi không được bay một mình và hệ thống không thể tách hành khách đi cùng trẻ nhỏ.
+> 
+> Để đảm bảo cả 2 mẹ con được bay cùng nhau, em đã tạm giữ **2 chỗ** cho bạn trên chuyến bay sớm nhất sáng mai:
+> 🔹 **BM 201 (07:00 ngày 13/11)** — còn 9 chỗ trống.
+> 🔹 **BM 205 (09:30 ngày 13/11)** — còn 4 chỗ trống.
+> 
+> Bạn muốn em xác nhận đổi vé cho 2 mẹ con sang chuyến **07:00** hay **09:30** sáng mai ạ?"*
+
+#### 2. Người dùng thấy gì trên màn hình (UI components ngoài câu chữ):
+* **Thẻ chuyến bay tối nay bị vô hiệu hoá (Disabled Flight Card):** Chuyến BM 217 (21:00) hiển thị tông màu xám mờ với nhãn cảnh báo vàng: `⚠️ Chỉ còn 1 ghế - Không đủ chỗ cho 2 hành khách (Có trẻ em đi kèm)`.
+* **2 Thẻ lựa chọn chuyến bay sáng mai (Interactive Option Cards):**
+  * Thẻ 1: `BM 201 · 07:00` | Số ghế: Còn 9 chỗ | Trạng thái: `[Đang giữ 2 chỗ]` | Nút chọn: `[Chọn chuyến 07:00]`.
+  * Thẻ 2: `BM 205 · 09:30` | Số ghế: Còn 4 chỗ | Trạng thái: `[Đang giữ 2 chỗ]` | Nút chọn: `[Chọn chuyến 09:30]`.
+* **Bộ đếm thời gian giữ chỗ (Countdown Timer):** Badge màu xanh lá đếm ngược `⏱️ Đang giữ chỗ miễn phí: 19:42`.
+* **Nút liên hệ nhân viên chuyên biệt:** `[Cần hỗ trợ tách vé / Ca đặc biệt - Gặp nhân viên]` hiển thị cố định ở chân trang.
+
+#### 3. Người dùng làm gì tiếp:
+* **Hành động chính:** Khách bấm chọn 1 trong 2 nút chuyến bay sáng mai $\rightarrow$ Hệ thống hiển thị bản xem lại thông tin (Review Sheet) trước khi gọi tool `doi_chuyen_bay`.
+* **Hành động ngoại lệ:** Nếu khách có tình huống đặc biệt (ví dụ: mẹ bay trước xử lý việc khẩn cấp, con ở lại cùng người thân khác) $\rightarrow$ Khách bấm nút `[Gặp nhân viên]` để nhân viên hỗ trợ nghiệp vụ tách mã PNR thủ công tại quầy.
+* **Không làm gì:** Hết 20 phút giữ chỗ, hệ thống giải phóng ghế mà không mất lần đổi vé miễn phí của khách.
+
+#### 4. Ai được báo, sau bao lâu:
+* **Hành khách:** Nhận Email xác nhận vé điện tử (E-ticket) mới và tin nhắn SMS cập nhật mã chuyến bay trong vòng **10 phút** sau khi bấm đổi.
+* **Hệ thống điều hành hãng Bay Mẫu:** Nhận thông tin giữ chỗ và thông tin đổi vé đồng bộ qua API trong vòng **30 giây**.
+* **Nhân viên CSKH:** Được thông báo trong vòng **60 giây** nếu khách nhấn nút chuyển nhân viên cho ca đặc biệt.
+
+#### 5. Lập luận quyết định (Hỏi lại / Trả lời kèm giới hạn / Dừng và chuyển người):
+* **Chọn phương án:** **Chặn trước hành vi sai phạm (Pre-check constraint), từ chối kèm giới hạn và Đề xuất thay thế khả thi**. AI chủ động chặn thao tác gọi tool `doi_chuyen_bay` vì không đủ điều kiện an toàn, nhưng giải quyết ngay nhu cầu gốc (cần vào TP.HCM sớm) bằng 2 chuyến sáng mai còn đủ chỗ.
+* **Phương án đã loại 1 — "Tự động đổi chuyến 21:00 cho 1 người lớn":** Loại vì vi phạm nghiêm trọng an toàn hàng không và đạo đức (bỏ lại đứa trẻ 5 tuổi ở sân bay hoặc cho trẻ 5 tuổi bay đơn độc).
+* **Phương án đã loại 2 — "Đổi nhầm rồi mới xin lỗi và chuyển nhân viên":** Loại vì làm tiêu tốn lần đổi miễn phí duy nhất của khách khi chưa có sự đồng ý, biến AI thành nguồn cơn rắc rối thay vì người hỗ trợ.
+* **Phương án đã loại 3 — "Chỉ thông báo hết vé rồi dừng lại bắt khách tự tìm":** Loại vì làm khách bối rối và hoang mang trong hoàn cảnh vội vã; khách có thể bấm loạn xạ dẫn đến lỡ luôn các chuyến sáng mai.
+
+#### 6. Loại lỗi & Cách ứng xử:
+* **Loại lỗi:** **Lỗi người dùng / Thiếu thông tin ràng buộc (User Error / Constraint Oversight)**. Khách trong lúc vội vàng chỉ nhớ mong muốn "bay tối nay" mà không nhớ rằng chuyến 21:00 chỉ còn 1 ghế và mình đang dắt theo trẻ nhỏ 5 tuổi.
+* **Cách ứng xử theo loại lỗi:** Không dùng từ ngữ mang tính chỉ trích, mà giải thích khách quan lý do an toàn cho trẻ nhỏ, thể hiện sự chu đáo bằng việc tự động tìm và giữ chỗ sẵn cho 2 mẹ con ở các chuyến khả thi nhất.
+
+#### 7. Nguyên tắc HAX / PAIR áp dụng cụ thể:
+* **HAX G10 (Scope down when uncertain):** Thể hiện trực tiếp ở câu hỏi thu hẹp phạm vi: *"Bạn muốn em xác nhận đổi vé cho 2 mẹ con sang chuyến 07:00 hay 09:30 sáng mai ạ?"* thay vì tự ý chọn liều một chuyến.
+* **HAX G11 (Explain why):** Thể hiện ở thẻ chuyến bay BM 217 bị xám hoá giải thích lý do: *"Chỉ còn duy nhất 1 chỗ trống... trẻ em 5 tuổi không được bay một mình"*.
+* **HAX G2 (Make clear how well the system can do):** Thể hiện qua các số liệu chỗ trống chính xác được hiển thị rõ ràng trên từng thẻ chuyến (`còn 9 chỗ`, `còn 4 chỗ`).
+* **PAIR — Errors + Graceful Failure:** Cung cấp nút `[Cần hỗ trợ tách vé / Ca đặc biệt - Gặp nhân viên]` để luôn có đường lui an toàn cho khách.
+
+---
+
+### 3.3 Lỗi nào sửa câu chữ không cứu được và Thiết kế cứu nó thế nào?
+
+* **Lỗi không thể cứu bằng câu chữ:**
+  * **Lỗi kích hoạt tool `gui_yeu_cau_hoan_ve`:**
+  * Nếu hệ thống cho phép AI tự động kích hoạt `gui_yeu_cau_hoan_ve` ngay trong chat, một khi lệnh API đã phát đi vào hệ thống của Traveloka và Bay Mẫu thì **hồ sơ vé cũ lập tức bị vô hiệu hoá và tiền vé bị chuyển vào quy trình phong toả xử lý tới 90 ngày**. 
+  * Lúc này, dù AI có nói lời xin lỗi hay đến đâu, giải thích hoa mỹ thế nào đi chăng nữa, thì **hành khách cũng đã chính thức mất vé, mất lần đổi miễn phí và không thể lên bất kỳ chuyến bay nào sáng mai**. Câu chữ hoàn toàn bất lực trước một hành động kỹ thuật mang tính không thể đảo ngược.
+
+* **Thiết kế cứu nó thế nào (Architectural & UX Intervention):**
+  1. **Tách quyền thực thi (Tool Decoupling):** Loại bỏ hoàn toàn khả năng gửi yêu cầu trực tiếp của AI. Tách tool thành 2 bước riêng biệt: AI chỉ có quyền `soan_yeu_cau_hoan_ve` (chuẩn bị dữ liệu), còn quyền gửi đi `gui_yeu_cau_hoan_ve` thuộc về một dịch vụ độc lập ngoài chat.
+  2. **Dựng rào cản ma sát có chủ đích (Intentional Friction Screen):** Buộc người dùng phải rời khỏi không gian chat, bước vào một màn hình Modal xác nhận độc lập. Tại đây, hệ thống hiển thị bảng so sánh thiệt hại, bắt buộc người dùng phải tự tay tích chọn 2 checkbox cam kết hiểu rõ rủi ro không thể đảo ngược, rồi mới kích hoạt nút gửi đi. Thiết kế này ngăn chặn 100% các quyết định bốc đồng do nóng giận trong chat.
+  3. **Ràng buộc kiểm tra trước (Safety Pre-check Constraint):** Trước khi gọi bất kỳ lệnh đổi vé nào, hệ thống tự động kiểm tra số lượng ghế trống còn lại với tổng số lượng khách trong booking PNR. Nếu số ghế < số khách, hệ thống khoá nút đổi và tự động gợi ý chuyến phù hợp hoặc chuyển luồng nhân viên.
 
 ## §4. Mức tự chủ  (chặng 4)
 
