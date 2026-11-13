@@ -6,7 +6,7 @@
 | ----------------------- | -------------- | ----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
 | Đồng Văn Quyến      | 2A202603769    | Cùng nhóm hoàn thiện từ cp1 - cp4, mô tả AI sai và phản ứng người dùng; chọn cách xử lý , gắn 2–3 nguyên tắc HAX/PAIR vào thiết kế cụ thể;  hoàn thiện bảng cp6, |
 | Nguyễn Thành Công    | 2A202603789    | Cùng nhóm hoàn thiện từ cp1 - cp4, hoàn thiện cp5, viết file index html phục vụ prototype,                                                                                            |
-| Trần Trọng Đức Tài | 2A202603732    | Cùng nhóm hoàn thiện từ cp1 - cp4, hỗ trợ sửa checkpoint 3, đưa ra đa số các kịch bản cho checkpoint 2                                                                           |
+| Trần Trọng Đức Tài | 2A202603732    | Cùng nhóm làm CP1–CP4; phụ trách kịch bản rủi ro CP2, hoàn thiện UX khi AI sai CP3, xử lý ca lạ CP7. |
 
 ## §1. Lát cắt & phạm vi
 
