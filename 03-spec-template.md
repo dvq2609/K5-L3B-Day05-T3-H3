@@ -1,11 +1,12 @@
-| col1 | col2 | col3 |
-| ---- | ---- | ---- |
-|      |      |      |
-|      |      |      |
+# Bài nộp LAB5 — T3 Du lịch · Nhóm H3
 
-# Bài nộp LAB5 — [Track] · Nhóm [tên]
+**Lớp:** L3B · **Zone/Bàn:** H3 · **Track:** T3 — Du lịch: trợ lý đổi chuyến khi chuyến bay bị huỷ
 
-[Danh sách thành viên và việc mỗi người làm — copy bảng từ README]
+| Họ và Tên | Mã Học Viên | Việc đã làm |
+|---|---|---|
+| Trần Trọng Đức Tài | 2A202603732 | Thiết kế kịch bản rủi ro (§2), phân tích UX khi AI sai (§3) & mức tự chủ (§4) |
+| Đỗ Văn Quyền | | Lát cắt & phạm vi (§1), kịch bản rủi ro (§2) |
+| (Thành viên 3) | | Prototype tương tác (§5), tiêu chí đánh giá (§6) & Demo (§7) |
 
 ## §1. Lát cắt & phạm vi
 
